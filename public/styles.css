@@ -190,7 +190,8 @@ textarea {
   display: none;
 }
 
-.site-menu button {
+.site-menu button,
+.site-menu a {
   display: inline-flex;
   align-items: center;
   gap: 10px;
@@ -199,6 +200,7 @@ textarea {
   border-color: transparent;
   color: var(--ink);
   text-align: left;
+  text-decoration: none;
 }
 
 .site-menu button img {
@@ -222,7 +224,8 @@ textarea {
   transform: rotate(45deg);
 }
 
-.site-menu button:hover {
+.site-menu button:hover,
+.site-menu a:hover {
   border-color: rgba(255, 216, 115, 0.48);
   color: var(--gold-bright);
   background: rgba(216, 173, 78, 0.1);
