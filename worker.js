@@ -139,14 +139,7 @@ async function handleDossier(request, env) {
     return markdownResponse("# Not found\n\n共有コンテキストが見つかりません。", 404);
   }
 
-  let publicKnowledge = "";
-  try {
-    publicKnowledge = await readPublicKnowledge(env, { headingLevel: 2 });
-  } catch (error) {
-    publicKnowledge = "## 公開ナレッジ\n\n- 公開ナレッジを読み込めませんでした。";
-  }
-
-  return markdownResponse(`${shareContext.trim()}\n\n---\n\n${publicKnowledge.trim()}\n`);
+  return markdownResponse(`${shareContext.trim()}\n`);
 }
 
 async function handlePublicKnowledge(env) {
