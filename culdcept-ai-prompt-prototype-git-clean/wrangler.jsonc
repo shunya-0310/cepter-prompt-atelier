@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cepter-prompt-atelier",
+  "main": "worker.js",
+  "compatibility_date": "2026-06-11",
+  "assets": {
+    "directory": "public",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": [
+      "/ai/dossier/*",
+      "/ai/knowledge/*"
+    ]
+  },
+  "observability": {
+    "enabled": true
+  }
+}

@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cepter Prompt Atelier</title>
+    <link rel="stylesheet" href="./styles.css?v=20260610-17" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" id="brandHome" href="#home" aria-label="トップページへ">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>
+            <strong>Cepter Prompt Atelier</strong>
+            <small>自分のAIに渡すセプター作戦室</small>
+          </span>
+        </a>
+        <div class="user-area">
+          <button class="user-login-button" id="headerLogin" type="button">ログイン</button>
+          <span class="user-name" id="headerUserName" hidden></span>
+          <button class="user-logout-button" id="headerLogout" type="button" hidden>ログアウト</button>
+        </div>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="メニューを開く" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="site-menu" id="siteMenu" hidden aria-label="サイトメニュー">
+          <button type="button" data-menu-target="landing">トップページ</button>
+          <button type="button" data-menu-target="book">ブック</button>
+          <button type="button" data-menu-target="strategy">ストラテジー</button>
+          <button type="button" data-menu-target="question">クエリ</button>
+          <button type="button" data-menu-target="prompt">プロンプト</button>
+          <button type="button" data-menu-target="knowledge">ナレッジ</button>
+          <button type="button" data-menu-target="related">関連サイト</button>
+          <button type="button" data-menu-target="contact">問い合わせ</button>
+          <a href="./privacy.html">プライバシーポリシー</a>
+        </nav>
+      </header>
+
+      <nav class="mobile-work-tabs" data-app-content aria-label="モバイル作業タブ">
+        <button class="mobile-work-tab active" data-mobile-tab="book" type="button" aria-label="BOOK" aria-selected="true">BOOK</button>
+        <button class="mobile-work-tab" data-mobile-tab="strategy" type="button" aria-label="STRATEGY" aria-selected="false">STRATEGY</button>
+        <button class="mobile-work-tab" data-mobile-tab="question" type="button" aria-label="QUERY" aria-selected="false">QUERY</button>
+        <button class="mobile-work-tab" data-mobile-tab="prompt" type="button" aria-label="PROMPT" aria-selected="false">PROMPT</button>
+        <button class="mobile-work-tab" data-mobile-tab="knowledge" type="button" aria-label="KNOWLEDGE" aria-selected="false">KNOWLEDGE</button>
+      </nav>
+      <button class="apply-book-button" id="applyBookChanges" type="button" hidden>ブックに反映する</button>
+
+      <main>
+        <section class="landing-page" id="home" data-screen="landing">
+          <div class="landing-copy">
+            <span class="section-kicker">Concept</span>
+            <h1>セプターのための<br />プロンプトメイカー</h1>
+            <p>
+              カード情報、戦略プロフィール、
+              セプターナレッジバンクを通して<br />
+              AI相談用プロンプトを作成
+            </p>
+            <div class="landing-actions">
+              <button class="button primary" id="startRegistration" type="button">ユーザー登録</button>
+              <button class="button secondary" id="startGuest" type="button">登録せず利用</button>
+              <button class="button secondary" id="startLogin" type="button">ログイン</button>
+            </div>
+            <p class="site-disclaimer">
+              本サイトはカルドセプト ビギンズの非公式ファンサイトです。<br />
+              各種名称・画像・情報の権利は各権利者に帰属します。<br />
+              <a href="./privacy.html">プライバシーポリシー</a>
+            </p>
+            <section class="feature-compare" aria-label="未登録と登録済みの違い">
+              <h2>できることの違い</h2>
+              <table>
+                <thead>
+                  <tr><th>機能</th><th>未登録</th><th>登録済み</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>ブック入力</td><td>可</td><td>可</td></tr>
+                  <tr><td>プロンプト生成</td><td>可</td><td>可</td></tr>
+                  <tr><td>ブック保存</td><td>一時利用</td><td>保存想定</td></tr>
+                  <tr><td>公開ナレッジ</td><td>閲覧<br />Like</td><td>閲覧<br />Like<br />投稿</td></tr>
+                  <tr><td>秘蔵ナレッジ</td><td>不可</td><td>可</td></tr>
+                  <tr><td>投稿バッジ</td><td>不可</td><td>可</td></tr>
+                </tbody>
+              </table>
+            </section>
+          </div>
+          <div class="landing-side">
+            <section class="landing-process" aria-label="プロンプト作成手順">
+              <h2>プロンプト作成手順</h2>
+              <div class="landing-steps">
+                <article>
+                  <span>1</span>
+                  <strong>ブックを登録する</strong>
+                  <p>初期ブックを選び、<br />所持枚数と投入枚数を調整します。</p>
+                </article>
+                <article>
+                  <span>2</span>
+                  <strong>ストラテジーを保存</strong>
+                  <p>ブックごとの勝ち筋や参考情報をメモします。</p>
+                </article>
+                <article>
+                  <span>3</span>
+                  <strong>AIへのプロンプトを生成する</strong>
+                  <p>生成したプロンプトを<br />自身のAIにペーストしてください。</p>
+                </article>
+              </div>
+            </section>
+            <section class="landing-knowledge">
+              <h2>セプターナレッジバンク</h2>
+              <p>セプターたちの公開ナレッジをプロンプトに使用できます。<br />登録ユーザーはナレッジ投稿に加え、自分だけが閲覧・使用できる秘蔵ナレッジ機能を使用できます。</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="login-page panel" data-screen="login" hidden>
+          <span class="section-kicker">Login</span>
+          <h1>ログイン</h1>
+          <form id="loginForm" class="registration-form">
+            <label class="field">
+              <span>メールアドレス</span>
+              <input id="loginName" type="email" autocomplete="username" placeholder="cepter@example.com" />
+            </label>
+            <label class="field">
+              <span>パスワード</span>
+              <input id="loginPassword" type="password" autocomplete="current-password" placeholder="パスワード" />
+            </label>
+            <div class="landing-actions">
+              <button class="button primary" type="submit">ログインして始める</button>
+              <button class="button secondary" id="loginToRegistration" type="button">ユーザー登録</button>
+            </div>
+            <button class="text-button" id="forgotPassword" type="button">パスワードを忘れた場合</button>
+            <p class="hint" id="passwordResetNotice" hidden>メールアドレスを入力してから押すと、再設定メールを送信します。</p>
+            <p class="hint auth-status" id="authStatus" role="status"></p>
+          </form>
+        </section>
+
+        <section class="register-page panel" data-screen="register" hidden>
+          <span class="section-kicker">Registration</span>
+          <h1>ユーザー登録</h1>
+          <p>
+            登録すると、ブックごとのストラテジー、秘蔵ナレッジ、投稿バッジを使えます。
+            メールアドレスとパスワードはSupabase Authで管理します。
+          </p>
+          <form id="registrationForm" class="registration-form">
+            <label class="field">
+              <span>ユーザー名</span>
+              <input id="registerUserName" type="text" autocomplete="username" placeholder="森を守りたいセプター" />
+            </label>
+            <label class="field">
+              <span>メールアドレス</span>
+              <input id="registerEmail" type="email" autocomplete="email" placeholder="cepter@example.com" />
+            </label>
+            <label class="field">
+              <span>パスワード</span>
+              <input id="registerPassword" type="password" autocomplete="new-password" placeholder="8文字以上" />
+            </label>
+            <div class="landing-actions">
+              <button class="button primary" type="submit">登録して始める</button>
+              <button class="button secondary" id="backToLanding" type="button">戻る</button>
+            </div>
+            <p class="hint auth-status" id="registerStatus" role="status"></p>
+          </form>
+        </section>
+
+        <section class="simple-page panel" data-screen="related" hidden>
+          <span class="section-kicker">Related Sites</span>
+          <h1>関連サイト</h1>
+          <p>工事中</p>
+        </section>
+
+        <section class="simple-page panel" data-screen="contact" hidden>
+          <span class="section-kicker">Contact</span>
+          <h1>問い合わせ</h1>
+          <p>
+            本サイトに関するお問い合わせは
+            <a href="https://x.com/gaju_nft" target="_blank" rel="noreferrer">がじゅまる丸（@gaju_nft）</a>
+            までお願いします。
+          </p>
+        </section>
+
+        <section class="mypage-grid" id="mypage" data-app-content>
+          <aside class="panel summary-panel mobile-pane-active" id="book" data-mobile-pane="book">
+            <span class="section-kicker">Book Select</span>
+            <h2>ブック選択</h2>
+            <div class="book-editor">
+              <label class="field">
+                <span>ブック選択</span>
+                <div class="book-select-row">
+                  <select id="savedBookSelect"></select>
+                  <button class="delete-book-button" id="deleteBook" type="button" aria-label="選択中のブックを削除" title="選択中のブックを削除">🗑</button>
+                </div>
+              </label>
+              <button class="button secondary book-register-open" id="newBook" type="button">新規登録</button>
+              <div class="book-registration" id="bookRegistration" hidden>
+                <div class="book-editor-divider" aria-hidden="true"></div>
+                <label class="field">
+                  <span>ブック名称</span>
+                  <input id="bookName" type="text" value="無属性スターター試案" />
+                </label>
+                <div class="book-actions">
+                  <button class="button secondary" id="cancelBookRegistration" type="button">キャンセル</button>
+                  <button class="button primary" id="saveBook" type="button">登録</button>
+                </div>
+              </div>
+            </div>
+            <p class="hint book-status" id="bookStatus" role="status"></p>
+            <div class="book-meter">
+              <div class="meter-label">
+                <span>ブック全体</span>
+                <strong id="bookCountStatus"><span id="bookCount">0</span> / 40</strong>
+              </div>
+              <div class="meter-track"><span id="bookMeter"></span></div>
+            </div>
+            <div class="book-breakdown" id="bookBreakdown"></div>
+          </aside>
+
+          <div class="panel profile-panel" data-mobile-pane="strategy">
+            <span class="section-kicker">My Strategy Profile</span>
+            <h2>このブックのストラテジー</h2>
+            <div class="active-book-chip">選択中: <strong data-current-book-name></strong></div>
+            <input id="displayName" type="hidden" value="" />
+            <div class="strategy-copy-tools" data-registered-only>
+              <label class="field">
+                <span>別ブックからストラテジーをコピー</span>
+                <select id="strategyCopySource"></select>
+              </label>
+              <button class="button secondary" id="copyStrategyFromBook" type="button">ストラテジーをコピー</button>
+            </div>
+            <textarea id="skillText" rows="13">#自分の基本ストラテジー
+- 初心者でも事故りにくい安定構築を優先
+- 拠点を作って守る戦い方が好き
+- 派手なコンボより、再現性と分かりやすさを重視
+- 所持カードが少ない場合は代替案も欲しい
+- まずはビギンズから始める前提で説明してほしい
+
+#効果的な組み合わせ
+- 
+
+#反映したいナレッジID
+- 
+
+#参考にしたい情報（テキスト or URL）
+- </textarea>
+            <p class="profile-note">注意：X等ログインが必要なURLはAIで読み取れない可能性があります。</p>
+          </div>
+        </section>
+
+        <section class="panel card-library mobile-pane-active" id="cards" data-mobile-pane="book" data-app-content>
+          <div class="panel-head">
+            <div>
+              <span class="section-kicker">Card Database</span>
+              <h2>所持・ブック枚数を入れる</h2>
+            </div>
+            <div class="filters search-tools" aria-label="カード表示フィルター">
+              <input id="cardSearch" class="search-input" type="search" placeholder="カード名・効果で検索" />
+              <button class="chip active" data-filter="all" type="button">全て</button>
+              <button class="chip" data-filter="book" type="button">ブック内</button>
+              <button class="chip" data-filter="owned" type="button">所持</button>
+            </div>
+          </div>
+          <div class="category-tabs" aria-label="カードカテゴリ">
+            <div class="book-meter card-sticky-book-meter" aria-label="ブック投入枚数">
+              <div class="meter-label">
+                <span>ブック全体</span>
+                <strong id="stickyBookCountStatus"><span id="stickyBookCount">0</span> / 40</strong>
+              </div>
+              <div class="meter-track"><span id="stickyBookMeter"></span></div>
+            </div>
+            <button class="category-tab active" data-tab="neutral" type="button"><img src="./assets/icons/creature-neutral.png" alt="" />無</button>
+            <button class="category-tab" data-tab="fire" type="button"><img src="./assets/icons/creature-fire.png" alt="" />火</button>
+            <button class="category-tab" data-tab="water" type="button"><img src="./assets/icons/creature-water.png" alt="" />水</button>
+            <button class="category-tab" data-tab="earth" type="button"><img src="./assets/icons/creature-earth.png" alt="" />地</button>
+            <button class="category-tab" data-tab="wind" type="button"><img src="./assets/icons/creature-air.png" alt="" />風</button>
+            <button class="category-tab" data-tab="item" type="button"><img src="./assets/icons/item.png" alt="" />アイテム</button>
+            <button class="category-tab" data-tab="spell" type="button"><img src="./assets/icons/spell.png" alt="" />スペル</button>
+          </div>
+          <p class="source-note">
+            サンプルデータ: PROPHECY由来のTSVを想定。列「使用」は「使用制限」として扱います。
+          </p>
+          <div class="card-grid dense-grid" id="cardGrid"></div>
+        </section>
+
+        <section class="panel knowledge-panel" id="knowledge" data-screen="knowledge" hidden>
+          <div class="panel-head">
+            <div>
+              <span class="section-kicker">CEPTER's KNOWLEDGE BANK</span>
+              <h2>セプターのためのナレッジバンク</h2>
+            </div>
+            <input id="registeredMode" type="checkbox" hidden />
+          </div>
+          <div class="badge-guide" aria-label="投稿バッジ説明">
+            <div>
+              <strong>投稿バッジ</strong>
+              <p>公開ナレッジで獲得したLike累計に応じて、投稿者の信頼度を色で表示します。</p>
+            </div>
+            <div class="badge-scale" aria-label="バッジ段階">
+              <span><i class="author-badge badge-green"></i>0+</span>
+              <span><i class="author-badge badge-blue"></i>5+</span>
+              <span><i class="author-badge badge-purple"></i>20+</span>
+              <span><i class="author-badge badge-red"></i>50+</span>
+              <span><i class="author-badge badge-gold"></i>100+</span>
+            </div>
+            <p class="badge-current" id="currentBadgeSummary">ログインすると現在のバッジを確認できます。</p>
+          </div>
+
+          <div class="knowledge-layout">
+            <div class="knowledge-board">
+              <div class="knowledge-tools">
+                <input id="knowledgeSearch" class="search-input" type="search" placeholder="ナレッジを検索" />
+                <button class="chip active" data-knowledge-filter="all" type="button">全て</button>
+                <button class="chip" data-knowledge-filter="book" type="button">ブック</button>
+                <button class="chip" data-knowledge-filter="play" type="button">立回り</button>
+                <button class="chip" data-knowledge-filter="other" type="button">その他</button>
+                <button class="chip" data-knowledge-filter="private" type="button">秘蔵</button>
+              </div>
+              <div class="knowledge-list" id="knowledgeList"></div>
+            </div>
+
+            <form class="knowledge-form" id="knowledgeForm">
+              <button class="knowledge-form-close" id="knowledgeComposeClose" type="button" aria-label="投稿フォームを閉じる">×</button>
+              <p class="hint" id="knowledgeModeHint">未登録ユーザーは閲覧とLikeのみできます。</p>
+              <label class="field">
+                <span>タイトル <b class="required-mark">*</b></span>
+                <input id="knowledgeTitle" type="text" placeholder="例: 初期ブックは守れる土地を先に作る" required />
+              </label>
+              <label class="field">
+                <span>観点 <b class="required-mark">*</b></span>
+                <select id="knowledgeViewpoint" required>
+                  <option value="book">ブック</option>
+                  <option value="play">立回り</option>
+                  <option value="other">その他</option>
+                </select>
+              </label>
+              <div class="related-card-fields">
+                <label class="field">
+                  <span>関連カード 1</span>
+                  <input id="knowledgeCard1" class="knowledge-card-input" type="text" list="knowledgeCardOptions" placeholder="カード名を入力" />
+                </label>
+                <label class="field">
+                  <span>関連カード 2</span>
+                  <input id="knowledgeCard2" class="knowledge-card-input" type="text" list="knowledgeCardOptions" placeholder="カード名を入力" />
+                </label>
+                <label class="field">
+                  <span>関連カード 3</span>
+                  <input id="knowledgeCard3" class="knowledge-card-input" type="text" list="knowledgeCardOptions" placeholder="カード名を入力" />
+                </label>
+                <datalist id="knowledgeCardOptions"></datalist>
+              </div>
+              <label class="field">
+                <span>コメント <b class="required-mark">*</b></span>
+                <textarea id="knowledgeComment" rows="6" placeholder="短いメモでOK。なぜそう思ったかも同じ欄に書けます。" required></textarea>
+              </label>
+              <label class="field">
+                <span>公開範囲</span>
+                <select id="knowledgeVisibility">
+                  <option value="public">公開ナレッジに投稿</option>
+                  <option value="private">秘蔵ナレッジに投稿</option>
+                </select>
+              </label>
+              <button class="button primary" id="addKnowledge" type="submit">ナレッジを保存</button>
+              <p class="hint" id="knowledgeStatus" role="status"></p>
+            </form>
+          </div>
+          <button class="knowledge-compose-button" id="knowledgeComposeToggle" type="button" aria-label="ナレッジを投稿">✎</button>
+        </section>
+
+        <section class="prompt-lab" id="context" data-app-content>
+          <div class="prompt-inputs">
+            <section class="panel" data-mobile-pane="question">
+              <span class="section-kicker">Question</span>
+              <h2>質問を記入</h2>
+              <div class="active-book-chip">選択中: <strong data-current-book-name></strong></div>
+              <textarea id="questionText" rows="7">このブックを、ビギンズから始める初心者でも扱いやすい形に整えたい。勝ち筋、抜く候補、足す候補、プレイ中に意識することを教えて。</textarea>
+            </section>
+          </div>
+
+          <section class="panel prompt-output" data-mobile-pane="prompt">
+            <div class="panel-head">
+              <div>
+                <span class="section-kicker">Prompt</span>
+                <h2>AIへのプロンプト生成</h2>
+                <div class="active-book-chip">選択中: <strong data-current-book-name></strong></div>
+              </div>
+            </div>
+            <input id="shareUrl" type="hidden" value="" />
+            <div class="prompt-actions">
+              <button class="button primary" id="makeShareUrl" type="button">プロンプト生成</button>
+              <button class="button secondary" id="copyPrompt" type="button">プロンプトをコピー</button>
+            </div>
+            <p class="hint" id="copyStatus" role="status"></p>
+            <pre id="promptPreview" data-prompt-context hidden></pre>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./supabase-config.js?v=20260610-16"></script>
+    <script src="./assets/embedded/app-data.js?v=20260610-16"></script>
+    <script src="./app.js?v=20260612-git5"></script>
+  </body>
+</html>
