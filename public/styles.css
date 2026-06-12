@@ -107,6 +107,7 @@ textarea {
 .user-logout-button,
 .menu-toggle,
 .site-menu button,
+.site-menu a,
 .text-button {
   border: 1px solid rgba(244, 214, 139, 0.28);
   color: var(--gold-bright);
@@ -2467,6 +2468,10 @@ textarea {
 
   body.mobile-tabs-ready [data-mobile-pane].mobile-pane-active {
     display: block;
+  }
+
+  .card-grid {
+    padding-bottom: 180px;
   }
 
   .panel,
