@@ -99,6 +99,7 @@ const BOOK_SIZE = 40;
 const DEFAULT_BOOK_ID = "starter-water-air";
 const DEFAULT_BOOK_NAME = "ブック水風";
 const PROFILE_HEADINGS = ["#自分の基本ストラテジー", "#効果的な組み合わせ", "#反映したいナレッジID", "#参考にしたい情報（テキスト or URL）"];
+const KNOWLEDGE_ID_HEADING = "#反映したいナレッジID";
 const VIEWPOINT_LABELS = {
   book: "ブック",
   play: "立回り",
@@ -284,6 +285,7 @@ const els = {
   stickyBookMeter: document.querySelector("#stickyBookMeter"),
   bookBreakdown: document.querySelector("#bookBreakdown"),
   skillText: document.querySelector("#skillText"),
+  knowledgeReferenceIds: document.querySelector("#knowledgeReferenceIds"),
   strategyCopySource: document.querySelector("#strategyCopySource"),
   copyStrategyFromBook: document.querySelector("#copyStrategyFromBook"),
   questionText: document.querySelector("#questionText"),
@@ -545,6 +547,57 @@ function ensureProfileHeadings(text) {
   }).join("\n\n");
 }
 
+function profileSections(text) {
+  const sections = {};
+  let currentHeading = "";
+  String(text || "")
+    .replaceAll("#参考にしたいURL", "#参考にしたい情報（テキスト or URL）")
+    .split(/\r?\n/)
+    .forEach((line) => {
+      if (line.startsWith("#")) {
+        currentHeading = line.trim();
+        sections[currentHeading] = sections[currentHeading] || [];
+        return;
+      }
+      if (currentHeading) sections[currentHeading].push(line);
+    });
+  return sections;
+}
+
+function profileSectionBody(text, heading) {
+  return (profileSections(text)[heading] || [])
+    .map((line) => line.replace(/^\s*[-*]\s*/, "").trim())
+    .filter(Boolean)
+    .filter((line) => line !== "-")
+    .join(", ");
+}
+
+function setProfileSectionBody(text, heading, body) {
+  const sections = profileSections(ensureProfileHeadings(text));
+  const entries = String(body || "")
+    .split(/[,\n、，]+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  sections[heading] = entries.length ? entries.map((item) => `- ${item}`) : ["- "];
+  return PROFILE_HEADINGS.map((profileHeading) => {
+    const lines = sections[profileHeading] || ["- "];
+    const content = lines.join("\n").trim() || "- ";
+    return `${profileHeading}\n${content}`;
+  }).join("\n\n");
+}
+
+function syncKnowledgeReferenceInputFromStrategy() {
+  if (!els.knowledgeReferenceIds) return;
+  els.knowledgeReferenceIds.value = profileSectionBody(els.skillText.value, KNOWLEDGE_ID_HEADING);
+}
+
+function writeKnowledgeReferenceInputToStrategy() {
+  if (!els.knowledgeReferenceIds) return;
+  els.skillText.value = setProfileSectionBody(els.skillText.value, KNOWLEDGE_ID_HEADING, els.knowledgeReferenceIds.value);
+  const activeBook = getActiveBook();
+  if (activeBook) activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+}
+
 function emptySkillText() {
   return PROFILE_HEADINGS.map((heading) => `${heading}\n- `).join("\n\n");
 }
@@ -604,6 +657,7 @@ function applyActiveBookToCards() {
     card.book = Number(activeBook.cards?.[card.id] || 0);
   });
   els.skillText.value = ensureProfileHeadings(activeBook.skillText || els.skillText.value);
+  syncKnowledgeReferenceInputFromStrategy();
   renderCurrentBookLabels();
 }
 
@@ -1252,7 +1306,99 @@ function badgeForKnowledgeAuthor(value) {
 
 function formatKnowledgeId(post) {
   const value = Number(post.publicNo || 0);
-  return value > 0 ? `ID:${String(value).padStart(5, "0")}` : "ID:-----";
+  if (value > 0) return `ID:${String(value).padStart(5, "0")}`;
+  const shortId = privateKnowledgeShortId(post);
+  return shortId ? `秘蔵:${shortId}` : "ID:-----";
+}
+
+function privateKnowledgeShortId(post) {
+  return String(post?.id || "")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .slice(0, 8)
+    .toUpperCase();
+}
+
+function knowledgeReferenceKey(post) {
+  const value = Number(post?.publicNo || 0);
+  if (value > 0) return `ID:${String(value).padStart(5, "0")}`;
+  const shortId = privateKnowledgeShortId(post);
+  return shortId ? `PVT:${shortId}` : "";
+}
+
+function normalizeKnowledgeReferenceToken(token) {
+  const raw = String(token || "").trim();
+  if (!raw || raw === "-") return "";
+  const privateMatch = raw.match(/(?:PVT|PRIVATE|秘蔵)[:：]?\s*([A-Za-z0-9-]{4,})/i);
+  if (privateMatch) {
+    const shortId = privateMatch[1].replace(/[^A-Za-z0-9]/g, "").slice(0, 8).toUpperCase();
+    return shortId ? `PVT:${shortId}` : "";
+  }
+  const idMatch = raw.match(/(?:ID[:：]?\s*)?0*(\d{1,5})$/i);
+  if (idMatch) return `ID:${String(Number(idMatch[1])).padStart(5, "0")}`;
+  const maybePrivate = raw.replace(/[^A-Za-z0-9]/g, "");
+  if (/^[A-Za-z0-9]{6,}$/.test(maybePrivate)) return `PVT:${maybePrivate.slice(0, 8).toUpperCase()}`;
+  return "";
+}
+
+function extractReferencedKnowledgeKeys(...texts) {
+  const keys = [];
+  const addKey = (key) => {
+    if (key && !keys.includes(key)) keys.push(key);
+  };
+  texts
+    .map((text) => String(text || ""))
+    .join("\n")
+    .split(/[\s,、，]+/)
+    .forEach((token) => addKey(normalizeKnowledgeReferenceToken(token)));
+  return keys;
+}
+
+function currentKnowledgeReferenceKeys() {
+  return extractReferencedKnowledgeKeys(
+    els.knowledgeReferenceIds?.value,
+    profileSectionBody(els.skillText.value, KNOWLEDGE_ID_HEADING),
+  );
+}
+
+function findKnowledgePostByReferenceKey(key) {
+  return state.knowledgePosts.find((post) => knowledgeReferenceKey(post) === key);
+}
+
+function resolveReferencedKnowledgePosts() {
+  const keys = currentKnowledgeReferenceKeys();
+  const posts = [];
+  const missingKeys = [];
+  keys.forEach((key) => {
+    const post = findKnowledgePostByReferenceKey(key);
+    if (post) posts.push(post);
+    else missingKeys.push(key);
+  });
+  return { keys, posts, missingKeys };
+}
+
+function isKnowledgeReferenceSelected(post) {
+  const key = knowledgeReferenceKey(post);
+  return Boolean(key && currentKnowledgeReferenceKeys().includes(key));
+}
+
+function setKnowledgeReferenceKeys(keys) {
+  if (!els.knowledgeReferenceIds) return;
+  els.knowledgeReferenceIds.value = keys
+    .map((key) => findKnowledgePostByReferenceKey(key))
+    .map((post, index) => (post ? formatKnowledgeId(post) : keys[index]))
+    .join(", ");
+  writeKnowledgeReferenceInputToStrategy();
+}
+
+function toggleKnowledgeReference(post) {
+  const key = knowledgeReferenceKey(post);
+  if (!key) return;
+  const keys = currentKnowledgeReferenceKeys();
+  const nextKeys = keys.includes(key) ? keys.filter((item) => item !== key) : [...keys, key];
+  setKnowledgeReferenceKeys(nextKeys);
+  persistAppState();
+  renderKnowledgePosts();
+  updateSummary();
 }
 
 function updateCurrentBadgeSummary() {
@@ -1405,6 +1551,8 @@ function renderKnowledgePosts() {
           : "<span>関連カードなし</span>";
         const badge = badgeForKnowledgeAuthor(post.badgeTier || post.authorScore);
         const canDelete = state.isRegistered && post.ownerId === "current-user";
+        const referenceSelected = isKnowledgeReferenceSelected(post);
+        const referenceButton = `<button class="reference-knowledge-button ${referenceSelected ? "selected" : ""}" data-reference-knowledge="${escapeHtml(post.id)}" type="button">${referenceSelected ? "反映中" : "反映"}</button>`;
         const likeButton =
           post.visibility === "public"
             ? `<button class="like-button ${liked ? "liked" : ""}" data-like-knowledge="${escapeHtml(post.id)}" type="button" aria-label="${escapeHtml(post.title)}をLike">
@@ -1421,6 +1569,7 @@ function renderKnowledgePosts() {
                 ${post.visibility === "private" ? '<span class="private-badge">秘蔵ナレッジ</span>' : ""}
               </div>
               <div class="knowledge-card-actions">
+                ${referenceButton}
                 ${likeButton}
                 ${canDelete ? `<button class="delete-knowledge-button" data-delete-knowledge="${escapeHtml(post.id)}" type="button">削除</button>` : ""}
               </div>
@@ -1476,6 +1625,31 @@ function buildKnowledgeMarkdown({ visibility = "public" } = {}) {
 ${post.comment}`;
     })
     .join("\n\n");
+}
+
+function buildSelectedKnowledgeMarkdown() {
+  const { posts, missingKeys } = resolveReferencedKnowledgePosts();
+  const sections = posts.map((post) => {
+    const badge = badgeForKnowledgeAuthor(post.badgeTier || post.authorScore);
+    return `## ${formatKnowledgeId(post)} ${post.title}
+
+- 種別: ${post.visibility === "private" ? "秘蔵ナレッジ" : "公開ナレッジ"}
+- 観点: ${VIEWPOINT_LABELS[post.viewpoint] || "ブック"}
+- 関連カード: ${post.relatedCards.length ? post.relatedCards.join(" / ") : "なし"}
+- Like数: ${post.likes}
+- 投稿者バッジ: ${badge.label}
+- 投稿日時: ${formatKnowledgeDate(post.createdAt)}
+
+### コメント
+
+${post.comment}`;
+  });
+  if (missingKeys.length) {
+    sections.push(`## 未取得の指定ナレッジID
+
+${missingKeys.map((key) => `- ${key}`).join("\n")}`);
+  }
+  return sections.join("\n\n") || "- 指定された公開ナレッジ・秘蔵ナレッジはありません。";
 }
 
 function publicKnowledgeUrl() {
@@ -1740,88 +1914,6 @@ function selectedCards() {
   return state.cards.filter((card) => Number(card.owned || 0) > 0 || Number(card.book || 0) > 0);
 }
 
-function buildContextMarkdown({ privateKnowledgeUrl = "", includeExternalReferenceLinks = true } = {}) {
-  const { bookCount, ownedTotal, usedKinds, missingCount } = getTotals();
-  const activeBook = getActiveBook();
-  const references = aiReferenceLinksMarkdown();
-  const bookCards = state.cards
-    .filter((card) => Number(card.book || 0) > 0)
-    .map((card) => {
-      return `- ${card.name} x${card.book}
-  - 作品: ${card.game}
-  - カテゴリ: ${card.category}
-  - 属性: ${card.element}
-  - レアリティ: ${card.rarity || "-"}
-  - 種別: ${card.kind}
-  - コスト: ${card.cost}
-  - AT/HP: ${card.st}/${card.hp}
-  - 配置制限: ${card.placementRestriction}
-  - 使用制限: ${card.usageRestriction}
-  - 能力・効果: ${card.effect}`;
-    })
-    .join("\n");
-  const ownedCandidates = selectedCards()
-    .filter((card) => Number(card.book || 0) === 0)
-    .map((card) => `- ${cardContextLine(card)} / 所持:${card.owned}`)
-    .join("\n");
-  const knowledgeBankUrl = publicKnowledgeUrl();
-  const externalReferenceSection = includeExternalReferenceLinks
-    ? `## 必ず確認するAI Reference
-回答前に、以下のAI Referenceを必ず確認してください。リンク先には公式サイト、基本ルール、カードデータ、初心者向け評価軸があります。
-
-${references}
-
-## 公開ナレッジURL
-公開ナレッジは量が増えるため、この共有コンテキストには本文を埋め込んでいません。以下のセプターナレッジバンクURLを開き、クエリ投稿者のブック状況に合う投稿を参照してください。
-
-- セプターナレッジバンク: ${knowledgeBankUrl}
-
-## 秘蔵ナレッジURL
-秘蔵ナレッジも量が増える可能性があるため、この共有コンテキストには本文を埋め込んでいません。以下の限定公開URLを開き、クエリ投稿者本人の好み・ストラテジーとして参照してください。
-
-- 秘蔵ナレッジ: ${privateKnowledgeUrl || "未発行"}`
-    : "";
-
-  return `# カルドセプト ビギンズ AIクエリコンテキスト
-
-${externalReferenceSection}
-
-## このクエリの目的
-このページは、ユーザーが自分のAIにカルドセプト ビギンズのブッククエリを投げるための限定公開コンテキストです。
-
-## ユーザーのストラテジー
-${els.skillText.value}
-
-## ブック概要
-- ブック名: ${activeBook?.name || DEFAULT_BOOK_NAME}
-- 投入枚数: ${bookCount} / ${BOOK_SIZE}
-- 所持カード合計: ${ownedTotal}
-- 採用カード種類: ${usedKinds}
-- 所持不足の採用枚数: ${missingCount}
-- 採用中の属性構成: ${buildBookElementSummary()}
-
-## 現在のブック内カード
-${bookCards || "- まだカードが採用されていません。"}
-
-## 所持しているが未採用の候補
-${ownedCandidates || "- 未採用候補はありません。"}
-
-## クエリ
-${els.questionText.value}
-`;
-}
-
-function extractReferencedKnowledgeIds(text) {
-  const ids = new Set();
-  String(text || "")
-    .match(/ID[:：]?\s*0*\d+/gi)
-    ?.forEach((match) => {
-      const numeric = Number(match.replace(/\D/g, ""));
-      if (numeric > 0) ids.add(numeric);
-    });
-  return ids;
-}
-
 function compactCardLine(card, copiesLabel = "") {
   const atHp = card.category === "クリーチャー" ? `${card.st}/${card.hp}` : "-";
   const copies = copiesLabel ? ` ${copiesLabel}` : "";
@@ -1839,13 +1931,7 @@ function buildPromptFallbackContext() {
     .filter((card) => Number(card.book || 0) === 0)
     .map((card) => compactCardLine(card, `所持:${card.owned}`))
     .join("\n");
-  const referencedIds = extractReferencedKnowledgeIds(els.skillText.value);
-  const referencedKnowledge = state.knowledgePosts
-    .filter((post) => referencedIds.has(Number(post.publicNo || 0)))
-    .map(
-      (post) => `- ${formatKnowledgeId(post)} ${post.title} / ${VIEWPOINT_LABELS[post.viewpoint] || "ブック"}\n  ${post.comment}`,
-    )
-    .join("\n");
+  const referencedKnowledge = buildSelectedKnowledgeMarkdown();
 
   return `## 本文コンテキスト
 
@@ -1868,8 +1954,8 @@ ${bookCards || "- まだカードが採用されていません。"}
 ### 所持しているが未採用の候補カード
 ${ownedCandidates || "- 未採用候補はありません。"}
 
-### 反映したいナレッジIDの本文
-${referencedKnowledge || "- 指定されたナレッジID、または本文内で確認できたナレッジはありません。"}
+### ID指定された公開ナレッジ・秘蔵ナレッジ
+${referencedKnowledge}
 
 ### 今回の質問
 ${els.questionText.value}`;
@@ -1923,46 +2009,44 @@ function buildInlineReferenceSummary() {
 - カードデータURLが空に見える場合でも、本文中のカード名、枚数、カテゴリ、属性、コスト、AT/HP、効果を優先して判断してください。`;
 }
 
-function buildDossierMarkdown({ privateKnowledgeMarkdown = "" } = {}) {
+function buildDossierMarkdown({ selectedKnowledgeMarkdown = "" } = {}) {
   return `# Cepter Prompt Atelier AI Dossier
 
 このDossierは、AIがカルドセプト ビギンズのブック相談に答えるための補助Markdown資料です。
 相談者本人のブック情報・所持カード・質問は、プロンプト本文側を優先してください。
-このDossierでは、基本情報、評価軸、秘蔵ナレッジ、公開ナレッジを確認してください。
+このDossierでは、基本情報、評価軸、ID指定された公開ナレッジ・秘蔵ナレッジを確認してください。
 
 ${buildInlineReferenceSummary()}
 
-## 秘蔵ナレッジ
-{#private-knowledge}
+## ID指定された公開ナレッジ・秘蔵ナレッジ
+{#selected-knowledge}
 
-${privateKnowledgeMarkdown}`;
+${selectedKnowledgeMarkdown || "- 指定された公開ナレッジ・秘蔵ナレッジはありません。"}`;
 }
 
 function buildPrompt() {
   const url = state.shareUrl || "先に「プロンプト生成」を押してURLを作成してください。";
   return `カルドセプト ビギンズのブック構築とストラテジーについて相談したいです。
 
-以下の本文コンテキストを主資料として、ブック構築とプレイ方針を助言してください。
+以下の本文コンテキストと参照情報を主資料として、ブック構築とプレイ方針を助言してください。
 
 ${buildPromptFallbackContext()}
 
-## 補助Dossier URL
-- 基本情報・評価軸・秘蔵ナレッジ・公開ナレッジ: ${url}
+${buildInlineReferenceSummary()}
 
-上記URLを直接開ける場合は、Markdown本文を読んで補助資料として参照してください。検索結果ではなくURL本文を取得してください。
+## 確認用Dossier URL
+- 基本情報・評価軸・ID指定された公開ナレッジ・秘蔵ナレッジ: ${url}
+
+このURLは出典確認用です。回答に必要な情報はこのプロンプト本文に含まれているため、URLを取得できない場合でも本文を根拠に回答してください。
 
 ## 参照情報の優先順位
 1. プロンプト本文の相談者本人の情報（相談内容・ブック状況・所持カード・ストラテジー）
-2. Dossier内の秘蔵ナレッジ・公開ナレッジ
+2. プロンプト本文中のID指定された公開ナレッジ・秘蔵ナレッジ
 3. ユーザー指定参考URL
-4. Dossier内の基本情報・評価軸
+4. プロンプト本文中の基本情報・評価軸
 
-秘蔵ナレッジと公開ナレッジは、相談者本人のブック状況と矛盾しない範囲で重視してください。
+ID指定された公開ナレッジ・秘蔵ナレッジは、相談者本人のブック状況と矛盾しない範囲で重視してください。
 ナレッジや基本情報が本文のブック状況と矛盾する場合は、プロンプト本文の相談者本人の情報を優先してください。
-
-## URL取得状況の報告
-回答冒頭で、Dossierとユーザー指定参考URLについて、取得できたもの・取得できなかったものを簡潔に報告してください。
-取得できないURLがある場合は、そのURLの貼り付けを要求せず、プロンプト本文から分かる範囲で回答してください。
 
 ## 回答形式
 回答では、勝ち筋、抜く候補、足す候補、所持カードが足りない場合の代替案、プレイ中に意識することを分けて説明してください。
@@ -2036,16 +2120,10 @@ function updateSummary() {
 }
 
 async function makeShareUrl() {
-  const privateKnowledgeMarkdown = `# 秘蔵ナレッジ
-
-このページはAIが参照するための、クエリ投稿者本人の秘蔵ナレッジです。
-公開ナレッジよりも、本人の好み・ストラテジーとして優先してください。
-
-${buildKnowledgeMarkdown({ visibility: "private" })}`;
-  const context = buildDossierMarkdown({ privateKnowledgeMarkdown });
+  const context = buildDossierMarkdown({ selectedKnowledgeMarkdown: buildSelectedKnowledgeMarkdown() });
   const url = await saveShareContext(context, { pagePath: "./share.html", urlFromToken: shareContextUrl });
   state.shareUrl = url;
-  state.privateKnowledgeUrl = `${url}#private-knowledge`;
+  state.privateKnowledgeUrl = `${url}#selected-knowledge`;
   state.promptGenerated = true;
   els.shareUrl.value = url;
   return url;
@@ -2399,11 +2477,17 @@ els.cardGrid.addEventListener("pointerdown", (event) => {
   });
 });
 
-[els.displayName, els.skillText, els.questionText].forEach((input) => {
+[els.displayName, els.skillText, els.knowledgeReferenceIds, els.questionText].filter(Boolean).forEach((input) => {
   input.addEventListener("input", () => {
+    if (input === els.knowledgeReferenceIds) {
+      writeKnowledgeReferenceInputToStrategy();
+      renderKnowledgePosts();
+    }
     if (input === els.skillText) {
       const activeBook = getActiveBook();
       if (activeBook) activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+      syncKnowledgeReferenceInputFromStrategy();
+      renderKnowledgePosts();
     }
     persistAppState();
     updateSummary();
@@ -2414,6 +2498,7 @@ els.copyStrategyFromBook.addEventListener("click", () => {
   const sourceBook = state.books.find((book) => book.id === els.strategyCopySource.value);
   if (!sourceBook) return;
   els.skillText.value = ensureProfileHeadings(sourceBook.skillText || els.skillText.value);
+  syncKnowledgeReferenceInputFromStrategy();
   const activeBook = getActiveBook();
   if (activeBook) activeBook.skillText = els.skillText.value;
   persistAppState();
@@ -2511,6 +2596,13 @@ els.knowledgeForm.addEventListener("submit", async (event) => {
 });
 
 els.knowledgeList.addEventListener("click", async (event) => {
+  const referenceButton = event.target.closest("[data-reference-knowledge]");
+  if (referenceButton) {
+    const post = state.knowledgePosts.find((item) => item.id === referenceButton.dataset.referenceKnowledge);
+    if (post) toggleKnowledgeReference(post);
+    return;
+  }
+
   const deleteButton = event.target.closest("[data-delete-knowledge]");
   if (deleteButton) {
     const id = deleteButton.dataset.deleteKnowledge;

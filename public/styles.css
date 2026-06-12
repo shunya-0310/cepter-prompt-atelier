@@ -1573,6 +1573,10 @@ textarea {
   margin: 0;
 }
 
+.knowledge-reference-field {
+  margin-top: 12px;
+}
+
 .book-actions {
   display: flex;
   flex-wrap: wrap;
@@ -2091,6 +2095,24 @@ textarea {
   font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
   font-size: 0.78rem;
   cursor: pointer;
+}
+
+.reference-knowledge-button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid rgba(244, 214, 139, 0.34);
+  color: var(--gold-bright);
+  background: rgba(9, 34, 29, 0.72);
+  font-family: "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.reference-knowledge-button.selected {
+  border-color: rgba(104, 205, 141, 0.62);
+  color: #b9f0c7;
+  background: rgba(23, 78, 49, 0.54);
 }
 
 .delete-knowledge-button {
