@@ -2233,7 +2233,10 @@ textarea {
   gap: 14px;
 }
 
-.prompt-output pre {
+.prompt-output textarea {
+  display: block;
+  width: 100%;
+  min-height: 360px;
   max-height: 560px;
   margin: 18px 0 0;
   padding: 18px;
@@ -2245,9 +2248,10 @@ textarea {
   font-size: 0.88rem;
   line-height: 1.7;
   white-space: pre-wrap;
+  resize: vertical;
 }
 
-.prompt-output pre[hidden] {
+.prompt-output textarea[hidden] {
   display: none;
 }
 
@@ -3011,7 +3015,7 @@ textarea {
     min-width: 0;
   }
 
-  .prompt-output pre {
+  .prompt-output textarea {
     max-height: calc(100dvh - 220px);
     min-height: calc(100dvh - 280px);
     margin-top: 12px;

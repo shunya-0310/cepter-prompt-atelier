@@ -172,6 +172,7 @@ const state = {
   supabaseUser: null,
   remoteReady: false,
   promptGenerated: false,
+  promptEdited: false,
 };
 
 let pendingCardChanges = false;
@@ -545,9 +546,20 @@ function ensureProfileHeadings(text) {
     if (currentHeading) sections[currentHeading].push(line);
   }
   return PROFILE_HEADINGS.map((heading) => {
-    const body = (sections[heading] || ["- "]).join("\n").trim() || "- ";
+    const body =
+      (sections[heading] || ["- "])
+        .filter((line) => !isRemovedDefaultStrategyLine(line))
+        .join("\n")
+        .trim() || "- ";
     return `${heading}\n${body}`;
   }).join("\n\n");
+}
+
+function isRemovedDefaultStrategyLine(line) {
+  const normalized = String(line || "")
+    .replace(/^\s*[-*]\s*/, "")
+    .trim();
+  return normalized === "所持カードが少ない場合は代替案も欲しい" || normalized === "まずはビギンズから始める前提で説明してほしい";
 }
 
 function profileSections(text) {
@@ -607,6 +619,18 @@ function writeKnowledgeReferenceInputToStrategy() {
 
 function emptySkillText() {
   return PROFILE_HEADINGS.map((heading) => `${heading}\n- `).join("\n\n");
+}
+
+function setPromptPreviewText(text, { force = false } = {}) {
+  if (!state.promptGenerated) {
+    els.promptPreview.hidden = true;
+    els.promptPreview.value = "";
+    return;
+  }
+  els.promptPreview.hidden = false;
+  if (force || !state.promptEdited) {
+    els.promptPreview.value = text;
+  }
 }
 
 function defaultBookByName(name) {
@@ -2054,11 +2078,9 @@ function updateSummary() {
   });
   renderBookBreakdown();
   if (state.promptGenerated) {
-    els.promptPreview.hidden = false;
-    els.promptPreview.textContent = buildPrompt();
+    setPromptPreviewText(buildPrompt());
   } else {
-    els.promptPreview.hidden = true;
-    els.promptPreview.textContent = "";
+    setPromptPreviewText("");
   }
 }
 
@@ -2680,8 +2702,8 @@ els.saveBook.addEventListener("click", () => {
 els.makeShareUrl.addEventListener("click", async () => {
   try {
     await makeShareUrl();
-    els.promptPreview.hidden = false;
-    els.promptPreview.textContent = buildPrompt();
+    state.promptEdited = false;
+    setPromptPreviewText(buildPrompt(), { force: true });
     els.copyStatus.textContent = "プロンプトを生成しました。";
   } catch (error) {
     els.copyStatus.textContent = "プロンプトを生成できませんでした。ローカルサーバーが起動しているか確認してください。";
@@ -2693,13 +2715,17 @@ els.copyPrompt.addEventListener("click", async () => {
     els.copyStatus.textContent = "先にプロンプト生成を押してください。";
     return;
   }
-  const prompt = buildPrompt();
+  const prompt = els.promptPreview.value || buildPrompt();
   try {
     await navigator.clipboard.writeText(prompt);
     els.copyStatus.textContent = "プロンプトをコピーしました。";
   } catch {
     els.copyStatus.textContent = "コピーできませんでした。下の文を選択してコピーしてください。";
   }
+});
+
+els.promptPreview.addEventListener("input", () => {
+  if (state.promptGenerated) state.promptEdited = true;
 });
 
 hydrateStaticIcons();
