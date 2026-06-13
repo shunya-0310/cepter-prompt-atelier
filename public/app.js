@@ -614,7 +614,36 @@ function syncKnowledgeReferenceInputFromStrategy() {
 function writeKnowledgeReferenceInputToStrategy() {
   if (!els.knowledgeReferenceIds) return;
   const activeBook = getActiveBook();
-  if (activeBook) activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+  if (activeBook) {
+    activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+    activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(els.knowledgeReferenceIds.value);
+  }
+}
+
+function normalizeKnowledgeReferenceText(value) {
+  return String(value || "")
+    .split(/[,\n、，]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .join(", ");
+}
+
+function extractKnowledgeReferenceMetadata(content) {
+  const source = String(content || "");
+  const commentMatch = source.match(/<!--\s*cepter-knowledge-reference-ids:\s*([\s\S]*?)\s*-->/i);
+  if (commentMatch) return normalizeKnowledgeReferenceText(commentMatch[1]);
+  return normalizeKnowledgeReferenceText(profileSectionBody(source, KNOWLEDGE_ID_HEADING));
+}
+
+function stripKnowledgeReferenceMetadata(content) {
+  return String(content || "").replace(/<!--\s*cepter-knowledge-reference-ids:[\s\S]*?-->/gi, "").trim();
+}
+
+function serializeStrategyProfileContent(skillText, knowledgeReferenceIds = "") {
+  const content = ensureProfileHeadings(stripKnowledgeReferenceMetadata(skillText || emptySkillText()));
+  const normalizedIds = normalizeKnowledgeReferenceText(knowledgeReferenceIds);
+  if (!normalizedIds) return content;
+  return `${content}\n\n<!-- cepter-knowledge-reference-ids: ${normalizedIds} -->`;
 }
 
 function emptySkillText() {
@@ -648,6 +677,7 @@ function createInitialBookFromCards() {
     name: DEFAULT_BOOK_NAME,
     cards,
     skillText: ensureProfileHeadings(els.skillText.value),
+    knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
   };
 }
 
@@ -673,6 +703,7 @@ function captureActiveBookFromCards() {
   const activeBook = getActiveBook();
   if (!activeBook) return;
   activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+  activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value);
   activeBook.cards = Object.fromEntries(
     state.cards
       .filter((card) => Number(card.book || 0) > 0)
@@ -687,9 +718,13 @@ function applyActiveBookToCards() {
   state.cards.forEach((card) => {
     card.book = Number(activeBook.cards?.[card.id] || 0);
   });
-  els.skillText.value = ensureProfileHeadings(activeBook.skillText || els.skillText.value);
-  syncKnowledgeReferenceInputFromStrategy();
+  const rawSkillText = stripKnowledgeReferenceMetadata(activeBook.skillText || els.skillText.value);
+  els.skillText.value = ensureProfileHeadings(rawSkillText);
+  const legacyIds = extractKnowledgeReferenceMetadata(activeBook.skillText);
+  activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(activeBook.knowledgeReferenceIds || legacyIds);
+  els.knowledgeReferenceIds.value = activeBook.knowledgeReferenceIds || "";
   renderCurrentBookLabels();
+  renderKnowledgePosts();
 }
 
 function isUuid(value) {
@@ -737,7 +772,7 @@ async function seedRemoteUserData() {
     const { error: strategyError } = await supabaseClient.from("strategy_profiles").insert({
       book_id: createdBook.id,
       user_id: state.supabaseUser.id,
-      content: ensureProfileHeadings(defaultBook.skillText || els.skillText.value),
+      content: serializeStrategyProfileContent(defaultBook.skillText || els.skillText.value, defaultBook.knowledgeReferenceIds),
     });
     if (strategyError) throw strategyError;
   }
@@ -760,7 +795,7 @@ async function insertRemoteDefaultBook(defaultBook) {
   const { error: strategyError } = await supabaseClient.from("strategy_profiles").insert({
     book_id: createdBook.id,
     user_id: state.supabaseUser.id,
-    content: ensureProfileHeadings(defaultBook.skillText || emptySkillText()),
+    content: serializeStrategyProfileContent(defaultBook.skillText || emptySkillText(), defaultBook.knowledgeReferenceIds),
   });
   if (strategyError) throw strategyError;
 }
@@ -866,14 +901,30 @@ async function loadRemoteUserData() {
   const repairedDefaultBooks = await repairEmptyRemoteDefaultBooks(remoteBooks, cardsByBookId);
   const repairedOwnedCards = await repairEmptyRemoteOwnedCards(remoteOwned);
   const strategyByBookId = new Map((remoteStrategies || []).map((row) => [row.book_id, row.content || ""]));
+  const locallySaved = safeParseJson(localStorage.getItem(STORAGE_KEY));
+  const localKnowledgeByBookId = new Map(
+    (Array.isArray(locallySaved?.books) ? locallySaved.books : []).map((book) => [
+      book.id,
+      normalizeKnowledgeReferenceText(book.knowledgeReferenceIds || extractKnowledgeReferenceMetadata(book.skillText)),
+    ]),
+  );
+  let usedLocalKnowledgeFallback = false;
 
-  state.books = remoteBooks.map((book) => ({
-    id: book.id,
-    name: book.name || DEFAULT_BOOK_NAME,
-    isDefault: Boolean(book.is_default),
-    cards: cardsByBookId.get(book.id) || {},
-    skillText: ensureProfileHeadings(strategyByBookId.get(book.id) || emptySkillText()),
-  }));
+  state.books = remoteBooks.map((book) => {
+    const remoteKnowledgeIds = extractKnowledgeReferenceMetadata(strategyByBookId.get(book.id) || "");
+    const localKnowledgeIds = normalizeKnowledgeReferenceText(
+      localKnowledgeByBookId.get(book.id) || (book.id === locallySaved?.currentBookId ? locallySaved?.knowledgeReferenceIds : ""),
+    );
+    if (!remoteKnowledgeIds && localKnowledgeIds) usedLocalKnowledgeFallback = true;
+    return {
+      id: book.id,
+      name: book.name || DEFAULT_BOOK_NAME,
+      isDefault: Boolean(book.is_default),
+      cards: cardsByBookId.get(book.id) || {},
+      skillText: ensureProfileHeadings(stripKnowledgeReferenceMetadata(strategyByBookId.get(book.id) || emptySkillText())),
+      knowledgeReferenceIds: normalizeKnowledgeReferenceText(remoteKnowledgeIds || localKnowledgeIds),
+    };
+  });
   state.currentBookId = state.books.some((book) => book.id === state.currentBookId) ? state.currentBookId : state.books[0].id;
   state.ownedByCardId = Object.fromEntries(
     (repairedOwnedCards ? Object.entries(state.defaultOwnedByCardId || {}).map(([card_id, owned_count]) => ({ card_id, owned_count })) : remoteOwned || [])
@@ -890,6 +941,7 @@ async function loadRemoteUserData() {
     STORAGE_KEY,
     JSON.stringify({
       skillText: els.skillText.value,
+      knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
       questionText: els.questionText.value,
       currentBookId: state.currentBookId,
       ownedByCardId: state.ownedByCardId,
@@ -904,6 +956,7 @@ async function loadRemoteUserData() {
     ? "初期ブック・所持カードを初期データから復元しました。"
     : "Supabaseからブックを読み込みました。";
   setPendingCardChanges(false);
+  if (usedLocalKnowledgeFallback) queueRemoteSync();
 }
 
 async function saveRemoteUserData() {
@@ -957,7 +1010,7 @@ async function saveRemoteUserData() {
       validBooks.map((book) => ({
         book_id: book.id,
         user_id: state.supabaseUser.id,
-        content: ensureProfileHeadings(book.skillText || emptySkillText()),
+        content: serializeStrategyProfileContent(book.skillText || emptySkillText(), book.knowledgeReferenceIds),
       })),
     );
     if (strategyError) throw strategyError;
@@ -999,6 +1052,7 @@ function persistAppState(options = {}) {
   captureOwnedFromCards();
   const payload = {
     skillText: els.skillText.value,
+    knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
     questionText: els.questionText.value,
     currentBookId: state.currentBookId,
     ownedByCardId: state.ownedByCardId,
@@ -1024,7 +1078,10 @@ function initializeStoredState() {
   }
   state.books = state.books.map((book) => ({
     ...book,
-    skillText: ensureProfileHeadings(book.skillText || savedSkillText),
+    skillText: ensureProfileHeadings(stripKnowledgeReferenceMetadata(book.skillText || savedSkillText)),
+    knowledgeReferenceIds: normalizeKnowledgeReferenceText(
+      book.knowledgeReferenceIds || extractKnowledgeReferenceMetadata(book.skillText) || (book.id === saved?.currentBookId ? saved?.knowledgeReferenceIds : ""),
+    ),
   }));
   state.currentBookId = state.books.some((book) => book.id === saved?.currentBookId)
     ? saved.currentBookId
@@ -2361,6 +2418,7 @@ els.applyBookChanges?.addEventListener("click", async () => {
       STORAGE_KEY,
       JSON.stringify({
         skillText: els.skillText.value,
+        knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
         questionText: els.questionText.value,
         currentBookId: state.currentBookId,
         ownedByCardId: state.ownedByCardId,
@@ -2455,7 +2513,10 @@ els.cardGrid.addEventListener("pointerdown", (event) => {
     }
     if (input === els.skillText) {
       const activeBook = getActiveBook();
-      if (activeBook) activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+      if (activeBook) {
+        activeBook.skillText = ensureProfileHeadings(els.skillText.value);
+        activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value);
+      }
       syncKnowledgeReferenceInputFromStrategy();
       renderKnowledgePosts();
     }
@@ -2468,9 +2529,13 @@ els.copyStrategyFromBook.addEventListener("click", () => {
   const sourceBook = state.books.find((book) => book.id === els.strategyCopySource.value);
   if (!sourceBook) return;
   els.skillText.value = ensureProfileHeadings(sourceBook.skillText || els.skillText.value);
-  syncKnowledgeReferenceInputFromStrategy();
+  els.knowledgeReferenceIds.value = normalizeKnowledgeReferenceText(sourceBook.knowledgeReferenceIds || extractKnowledgeReferenceMetadata(sourceBook.skillText));
   const activeBook = getActiveBook();
-  if (activeBook) activeBook.skillText = els.skillText.value;
+  if (activeBook) {
+    activeBook.skillText = els.skillText.value;
+    activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(els.knowledgeReferenceIds.value);
+  }
+  renderKnowledgePosts();
   persistAppState();
   updateSummary();
 });
@@ -2687,6 +2752,7 @@ els.saveBook.addEventListener("click", () => {
     name,
     cards: {},
     skillText: emptySkillText(),
+    knowledgeReferenceIds: "",
   };
   state.books.push(book);
   state.currentBookId = book.id;
