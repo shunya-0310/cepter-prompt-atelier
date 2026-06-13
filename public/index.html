@@ -26,7 +26,7 @@
       content="カルドセプト ビギンズのブック情報、所持カード、ナレッジをまとめて、AIに渡せる相談プロンプトを作るサイトです。"
     />
     <meta name="twitter:image" content="https://cepter-atelier.com/assets/social/og-image.png" />
-    <link rel="stylesheet" href="./styles.css?v=20260612-18" />
+    <link rel="stylesheet" href="./styles.css?v=20260613-note-link1" />
   </head>
   <body>
     <div class="page-shell">
@@ -247,17 +247,12 @@
               </label>
               <button class="button secondary" id="copyStrategyFromBook" type="button">ストラテジーをコピー</button>
             </div>
-            <textarea id="skillText" rows="13">#自分の基本ストラテジー
+            <textarea id="skillText" rows="13">#このブックのストラテジー、狙っている勝ち筋
 - 初心者でも事故りにくい安定構築を優先
 - 拠点を作って守る戦い方が好き
 - 派手なコンボより、再現性と分かりやすさを重視
-- 所持カードが少ない場合は代替案も欲しい
-- まずはビギンズから始める前提で説明してほしい
 
-#効果的な組み合わせ
-- 
-
-#反映したいナレッジID
+#このブックのコアとなるカード
 - 
 
 #参考にしたい情報（テキスト or URL）
@@ -266,7 +261,10 @@
               <span>反映したい公開・秘蔵ナレッジID</span>
               <input id="knowledgeReferenceIds" type="text" placeholder="例: ID:00003, ID:00004" />
             </label>
-            <p class="profile-note">ナレッジ一覧の「反映」ボタンでも追加できます。X等ログインが必要なURLはAIで読み取れない可能性があります。</p>
+            <p class="profile-note">
+              <a href="#knowledge" data-knowledge-list-link>ナレッジ一覧</a>の「反映」ボタンでも追加できます。<br />
+              X等ログインが必要なURLはAIで読み取れない可能性があります。
+            </p>
           </div>
         </section>
 
@@ -422,6 +420,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./supabase-config.js?v=20260610-16"></script>
     <script src="./assets/embedded/app-data.js?v=20260610-16"></script>
-    <script src="./app.js?v=20260613-knowledge-id1"></script>
+    <script src="./app.js?v=20260613-note-link1"></script>
   </body>
 </html>

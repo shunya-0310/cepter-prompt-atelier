@@ -98,7 +98,7 @@ const GUEST_KEY_STORAGE_KEY = "cepter-prompt-atelier-guest-key-v1";
 const BOOK_SIZE = 40;
 const DEFAULT_BOOK_ID = "starter-water-air";
 const DEFAULT_BOOK_NAME = "ブック水風";
-const PROFILE_HEADINGS = ["#自分の基本ストラテジー", "#効果的な組み合わせ", "#反映したいナレッジID", "#参考にしたい情報（テキスト or URL）"];
+const PROFILE_HEADINGS = ["#このブックのストラテジー、狙っている勝ち筋", "#このブックのコアとなるカード", "#参考にしたい情報（テキスト or URL）"];
 const KNOWLEDGE_ID_HEADING = "#反映したいナレッジID";
 const VIEWPOINT_LABELS = {
   book: "ブック",
@@ -530,7 +530,10 @@ async function loadInitialBookData() {
 
 function ensureProfileHeadings(text) {
   const source = String(text || els.skillText.value || "").trim();
-  const migrated = source.replaceAll("#参考にしたいURL", "#参考にしたい情報（テキスト or URL）");
+  const migrated = source
+    .replaceAll("#参考にしたいURL", "#参考にしたい情報（テキスト or URL）")
+    .replaceAll("#自分の基本ストラテジー", "#このブックのストラテジー、狙っている勝ち筋")
+    .replaceAll("#効果的な組み合わせ", "#このブックのコアとなるカード");
   const sections = {};
   let currentHeading = "";
   for (const line of migrated.split(/\r?\n/)) {
@@ -552,6 +555,8 @@ function profileSections(text) {
   let currentHeading = "";
   String(text || "")
     .replaceAll("#参考にしたいURL", "#参考にしたい情報（テキスト or URL）")
+    .replaceAll("#自分の基本ストラテジー", "#このブックのストラテジー、狙っている勝ち筋")
+    .replaceAll("#効果的な組み合わせ", "#このブックのコアとなるカード")
     .split(/\r?\n/)
     .forEach((line) => {
       if (line.startsWith("#")) {
@@ -588,12 +593,14 @@ function setProfileSectionBody(text, heading, body) {
 
 function syncKnowledgeReferenceInputFromStrategy() {
   if (!els.knowledgeReferenceIds) return;
-  els.knowledgeReferenceIds.value = profileSectionBody(els.skillText.value, KNOWLEDGE_ID_HEADING);
+  const legacyIds = profileSectionBody(els.skillText.value, KNOWLEDGE_ID_HEADING);
+  if (legacyIds && !els.knowledgeReferenceIds.value.trim()) {
+    els.knowledgeReferenceIds.value = legacyIds;
+  }
 }
 
 function writeKnowledgeReferenceInputToStrategy() {
   if (!els.knowledgeReferenceIds) return;
-  els.skillText.value = setProfileSectionBody(els.skillText.value, KNOWLEDGE_ID_HEADING, els.knowledgeReferenceIds.value);
   const activeBook = getActiveBook();
   if (activeBook) activeBook.skillText = ensureProfileHeadings(els.skillText.value);
 }
@@ -1944,7 +1951,7 @@ function buildPromptFallbackContext() {
 - 所持不足の採用枚数: ${missingCount}
 - 採用中の属性構成: ${buildBookElementSummary()}
 
-### クエリ投稿者のストラテジー
+### このブックのストラテジー・狙い
 ${els.skillText.value}
 
 ### 現在のブック内カード
@@ -1953,99 +1960,36 @@ ${bookCards || "- まだカードが採用されていません。"}
 ### 所持しているが未採用の候補カード
 ${ownedCandidates || "- 未採用候補はありません。"}
 
-### ID指定された公開ナレッジ・秘蔵ナレッジ
+### 採用したいナレッジ
 ${referencedKnowledge}
 
 ### 今回の質問
 ${els.questionText.value}`;
 }
 
-function buildPromptBriefFallbackContext() {
-  const { bookCount, ownedTotal, usedKinds, missingCount } = getTotals();
-  const activeBook = getActiveBook();
-  return `## URL取得失敗時の最低限コンテキスト
-- ゲーム: カルドセプト ビギンズ
-- 相談内容: ブック構築とプレイ方針
-- ブック名: ${activeBook?.name || DEFAULT_BOOK_NAME}
-- 投入枚数: ${bookCount} / ${BOOK_SIZE}
-- 採用カード種類: ${usedKinds}
-- 所持カード合計: ${ownedTotal}
-- 所持不足の採用枚数: ${missingCount}
-- 採用中の属性構成: ${buildBookElementSummary()}
-
-### クエリ投稿者のストラテジー・参考URL
-${els.skillText.value || "未入力"}
-
-### 今回の質問
-${els.questionText.value || "未入力"}`;
-}
-
-function buildInlineReferenceSummary() {
-  return `## 参照情報の要約
-
-### 基本ルール・回答方針
-- 相談対象はカルドセプト ビギンズのブック構築とプレイ方針です。
-- 強さだけでなく、扱いやすさ、事故りにくさ、所持カード制約を重視してください。
-- 初心者向けの場合は、複雑なコンボよりも役割が分かりやすく再現性の高い構成を優先してください。
-- 断定しすぎず、カード効果、所持枚数、ユーザーの条件に基づいて提案してください。
-- 公式情報とユーザー入力を優先し、不明点は推測として分けてください。
-
-### ブック構築で見る観点
-- 土地を取れるクリーチャー、拠点にできるクリーチャー、拠点を守る手段があるか。
-- 高額領地を避ける、崩す、無力化する手段があるか。
-- 手札事故を減らす手段、魔力を稼ぐ手段、損失を減らす手段があるか。
-- コストが重すぎないか、使用制限や配置制限で実戦時に困らないか。
-
-### 初心者向け評価軸
-- カードの役割が分かりやすく、序盤から動けること。
-- 拠点候補と防衛手段が両方あること。
-- 引いたカードが腐りにくく、1枚のカードに依存しすぎないこと。
-- 所持していないカードを大量に要求しないこと。
-- 回答では、現在の狙い、良い点、不足役割、抜く候補、足す候補、代替案、プレイ中に意識することを分けてください。
-
-### カードデータの扱い
-- このプロンプト本文には、現在のブック内カードと所持している未採用候補カードの効果を抜粋しています。
-- カードデータURLが空に見える場合でも、本文中のカード名、枚数、カテゴリ、属性、コスト、AT/HP、効果を優先して判断してください。`;
-}
-
 function buildDossierMarkdown({ selectedKnowledgeMarkdown = "" } = {}) {
   return `# Cepter Prompt Atelier AI Dossier
 
-このDossierは、AIがカルドセプト ビギンズのブック相談に答えるための補助Markdown資料です。
-相談者本人のブック情報・所持カード・質問は、プロンプト本文側を優先してください。
-このDossierでは、基本情報、評価軸、ID指定された公開ナレッジ・秘蔵ナレッジを確認してください。
-
-${buildInlineReferenceSummary()}
-
-## ID指定された公開ナレッジ・秘蔵ナレッジ
+## 採用したいナレッジ
 {#selected-knowledge}
 
-${selectedKnowledgeMarkdown || "- 指定された公開ナレッジ・秘蔵ナレッジはありません。"}`;
+${selectedKnowledgeMarkdown || "- 採用したいナレッジはありません。"}`;
 }
 
 function buildPrompt() {
-  const url = state.shareUrl || "先に「プロンプト生成」を押してURLを作成してください。";
   return `カルドセプト ビギンズのブック構築とストラテジーについて相談したいです。
 
-以下の本文コンテキストと参照情報を主資料として、ブック構築とプレイ方針を助言してください。
+以下の本文コンテキストをもとに、ブック構築とプレイ方針を助言してください。
 
 ${buildPromptFallbackContext()}
 
-${buildInlineReferenceSummary()}
-
-## 確認用Dossier URL
-- 基本情報・評価軸・ID指定された公開ナレッジ・秘蔵ナレッジ: ${url}
-
-このURLは出典確認用です。回答に必要な情報はこのプロンプト本文に含まれているため、URLを取得できない場合でも本文を根拠に回答してください。
-
-## 参照情報の優先順位
+## 情報の優先順位
 1. プロンプト本文の相談者本人の情報（相談内容・ブック状況・所持カード・ストラテジー）
-2. プロンプト本文中のID指定された公開ナレッジ・秘蔵ナレッジ
+2. プロンプト本文中の採用したいナレッジ
 3. ユーザー指定参考URL
-4. プロンプト本文中の基本情報・評価軸
 
-ID指定された公開ナレッジ・秘蔵ナレッジは、相談者本人のブック状況と矛盾しない範囲で重視してください。
-ナレッジや基本情報が本文のブック状況と矛盾する場合は、プロンプト本文の相談者本人の情報を優先してください。
+採用したいナレッジは、相談者本人のブック状況と矛盾しない範囲で重視してください。
+ナレッジが本文のブック状況と矛盾する場合は、プロンプト本文の相談者本人の情報を優先してください。
 
 ## 回答形式
 回答では、勝ち筋、抜く候補、足す候補、所持カードが足りない場合の代替案、プレイ中に意識することを分けて説明してください。
@@ -2419,6 +2363,11 @@ els.applyBookChanges?.addEventListener("click", async () => {
     els.applyBookChanges.disabled = false;
     els.applyBookChanges.textContent = "ブックに反映する";
   }
+});
+
+document.querySelector("[data-knowledge-list-link]")?.addEventListener("click", (event) => {
+  event.preventDefault();
+  showScreen("knowledge", { smooth: true });
 });
 
 els.cardGrid.addEventListener("click", (event) => {

@@ -1537,6 +1537,17 @@ textarea {
   margin: 10px 0 0;
   color: #d8c899;
   font-size: 0.86rem;
+  line-height: 1.8;
+}
+
+.profile-note a {
+  color: var(--gold);
+  text-decoration-color: rgba(244, 214, 139, 0.55);
+  text-underline-offset: 3px;
+}
+
+.profile-note a:hover {
+  color: #fff1b8;
 }
 
 .active-book-chip {
