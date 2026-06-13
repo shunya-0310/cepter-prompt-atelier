@@ -1307,8 +1307,7 @@ function badgeForKnowledgeAuthor(value) {
 function formatKnowledgeId(post) {
   const value = Number(post.publicNo || 0);
   if (value > 0) return `ID:${String(value).padStart(5, "0")}`;
-  const shortId = privateKnowledgeShortId(post);
-  return shortId ? `秘蔵:${shortId}` : "ID:-----";
+  return "ID:-----";
 }
 
 function privateKnowledgeShortId(post) {
@@ -1702,7 +1701,7 @@ async function saveRemoteKnowledgePost({ title, viewpoint, relatedCards, comment
       comment,
       visibility,
     })
-    .select("id,created_at")
+    .select("id,public_no,created_at")
     .single();
   if (error) throw error;
   const relatedRows = relatedCards.map((cardId, index) => ({
@@ -2569,6 +2568,7 @@ els.knowledgeForm.addEventListener("submit", async (event) => {
   }
   const post = normalizeKnowledgePost({
     id: remotePost?.id || `knowledge-${Date.now().toString(36)}`,
+    publicNo: remotePost?.public_no,
     title,
     viewpoint: els.knowledgeViewpoint.value,
     relatedCards,
