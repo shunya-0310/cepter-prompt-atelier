@@ -677,7 +677,7 @@ function createInitialBookFromCards() {
     name: DEFAULT_BOOK_NAME,
     cards,
     skillText: ensureProfileHeadings(els.skillText.value),
-    knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
+    knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
   };
 }
 
@@ -703,7 +703,7 @@ function captureActiveBookFromCards() {
   const activeBook = getActiveBook();
   if (!activeBook) return;
   activeBook.skillText = ensureProfileHeadings(els.skillText.value);
-  activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value);
+  activeBook.knowledgeReferenceIds = state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "";
   activeBook.cards = Object.fromEntries(
     state.cards
       .filter((card) => Number(card.book || 0) > 0)
@@ -721,8 +721,8 @@ function applyActiveBookToCards() {
   const rawSkillText = stripKnowledgeReferenceMetadata(activeBook.skillText || els.skillText.value);
   els.skillText.value = ensureProfileHeadings(rawSkillText);
   const legacyIds = extractKnowledgeReferenceMetadata(activeBook.skillText);
-  activeBook.knowledgeReferenceIds = normalizeKnowledgeReferenceText(activeBook.knowledgeReferenceIds || legacyIds);
-  els.knowledgeReferenceIds.value = activeBook.knowledgeReferenceIds || "";
+  activeBook.knowledgeReferenceIds = state.isRegistered ? normalizeKnowledgeReferenceText(activeBook.knowledgeReferenceIds || legacyIds) : "";
+  els.knowledgeReferenceIds.value = state.isRegistered ? activeBook.knowledgeReferenceIds || "" : "";
   renderCurrentBookLabels();
   renderKnowledgePosts();
 }
@@ -941,7 +941,7 @@ async function loadRemoteUserData() {
     STORAGE_KEY,
     JSON.stringify({
       skillText: els.skillText.value,
-      knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
+      knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
       questionText: els.questionText.value,
       currentBookId: state.currentBookId,
       ownedByCardId: state.ownedByCardId,
@@ -1052,7 +1052,7 @@ function persistAppState(options = {}) {
   captureOwnedFromCards();
   const payload = {
     skillText: els.skillText.value,
-    knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
+    knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
     questionText: els.questionText.value,
     currentBookId: state.currentBookId,
     ownedByCardId: state.ownedByCardId,
@@ -1069,6 +1069,7 @@ function persistAppState(options = {}) {
 function initializeStoredState() {
   const saved = safeParseJson(localStorage.getItem(STORAGE_KEY));
   const savedSkillText = typeof saved?.skillText === "string" ? ensureProfileHeadings(saved.skillText) : ensureProfileHeadings(els.skillText.value);
+  state.isRegistered = Boolean(saved?.isRegistered);
 
   state.books = Array.isArray(saved?.books) && saved.books.length ? saved.books : state.defaultBooks;
   for (const defaultBook of state.defaultBooks) {
@@ -1079,9 +1080,11 @@ function initializeStoredState() {
   state.books = state.books.map((book) => ({
     ...book,
     skillText: ensureProfileHeadings(stripKnowledgeReferenceMetadata(book.skillText || savedSkillText)),
-    knowledgeReferenceIds: normalizeKnowledgeReferenceText(
-      book.knowledgeReferenceIds || extractKnowledgeReferenceMetadata(book.skillText) || (book.id === saved?.currentBookId ? saved?.knowledgeReferenceIds : ""),
-    ),
+    knowledgeReferenceIds: state.isRegistered
+      ? normalizeKnowledgeReferenceText(
+          book.knowledgeReferenceIds || extractKnowledgeReferenceMetadata(book.skillText) || (book.id === saved?.currentBookId ? saved?.knowledgeReferenceIds : ""),
+        )
+      : "",
   }));
   state.currentBookId = state.books.some((book) => book.id === saved?.currentBookId)
     ? saved.currentBookId
@@ -1091,7 +1094,6 @@ function initializeStoredState() {
   }
   state.ownedByCardId =
     saved?.ownedByCardId && typeof saved.ownedByCardId === "object" ? saved.ownedByCardId : state.defaultOwnedByCardId;
-  state.isRegistered = Boolean(saved?.isRegistered);
   state.userName = typeof saved?.userName === "string" ? saved.userName : "";
   state.knowledgePosts =
     Array.isArray(saved?.knowledgePosts) && saved.knowledgePosts.length
@@ -1237,6 +1239,10 @@ async function applySupabaseSession(session) {
     state.remoteReady = false;
     state.isRegistered = false;
     state.userName = "";
+    state.books.forEach((book) => {
+      book.knowledgeReferenceIds = "";
+    });
+    if (els.knowledgeReferenceIds) els.knowledgeReferenceIds.value = "";
     if (els.registeredMode) els.registeredMode.checked = false;
     updateKnowledgeMode();
     renderAuthState();
@@ -2418,7 +2424,7 @@ els.applyBookChanges?.addEventListener("click", async () => {
       STORAGE_KEY,
       JSON.stringify({
         skillText: els.skillText.value,
-        knowledgeReferenceIds: normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value),
+        knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
         questionText: els.questionText.value,
         currentBookId: state.currentBookId,
         ownedByCardId: state.ownedByCardId,
