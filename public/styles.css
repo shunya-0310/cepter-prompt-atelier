@@ -524,6 +524,25 @@ body.screen-app [data-screen] {
   color: var(--gold-bright);
 }
 
+.related-site-section {
+  margin-top: 22px;
+}
+
+.related-site-section h2 {
+  margin: 0 0 10px;
+  color: #f6d884;
+  font-size: 1.12rem;
+}
+
+.related-site-section ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 1.2em;
+  color: #e4d4a8;
+  line-height: 1.8;
+}
+
 .registration-form {
   margin-top: 18px;
 }
