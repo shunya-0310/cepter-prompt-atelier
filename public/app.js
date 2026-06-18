@@ -72,8 +72,8 @@ const AI_REFERENCES = [
   },
   {
     label: "ビギンズカードデータ",
-    url: "./ai-cards-begins.md",
-    absolutePath: "/ai-cards-begins.md",
+    url: "./cards-begins.html",
+    absolutePath: "/cards-begins.html",
   },
   {
     label: "初心者向けブック構築の評価軸",
