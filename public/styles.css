@@ -376,11 +376,11 @@ body.screen-app [data-screen] {
 .register-page h1 {
   margin: 12px 0 18px;
   color: #fff4cf;
-  font-size: clamp(2.3rem, 6vw, 5rem);
-  line-height: 1.08;
+  font-size: clamp(2rem, 4.8vw, 4rem);
+  line-height: 1.16;
   letter-spacing: 0;
   text-wrap: balance;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
 }
 
 .register-page h1 {
@@ -2546,8 +2546,8 @@ textarea {
 
   .landing-copy h1,
   .register-page h1 {
-    font-size: 2rem;
-    line-height: 1.15;
+    font-size: 1.85rem;
+    line-height: 1.22;
   }
 
   .landing-copy p,
