@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /share.html
+Disallow: /knowledge.html
+
+Sitemap: https://cepter-atelier.com/sitemap.xml
