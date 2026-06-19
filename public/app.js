@@ -183,6 +183,179 @@ const supabaseAnonKey = String(supabaseConfig.anonKey || "");
 const supabaseClient =
   window.supabase && supabaseUrl && supabaseAnonKey ? window.supabase.createClient(supabaseUrl, supabaseAnonKey) : null;
 const embeddedData = { cardData: {}, bookData: {} };
+const embeddedIconData = {};
+
+document.addEventListener(
+  "error",
+  (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement && target.closest("button, .book-breakdown, .category-tabs, .site-menu")) {
+      target.replaceWith(document.createTextNode(target.alt || ""));
+    }
+  },
+  true,
+);
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function iconImg(file, alt, className = "inline-icon") {
+  const src = embeddedIconData[file] || `${ICON_BASE}${file}`;
+  return `<img class="${className}" src="${src}" alt="${escapeHtml(alt)}" title="${escapeHtml(alt)}" onerror="this.replaceWith(document.createTextNode(this.alt || ''))" />`;
+}
+
+function hydrateStaticIcons() {
+  document.querySelectorAll('img[src^="./assets/icons/"]').forEach((image) => {
+    const file = image.getAttribute("src").split("/").pop();
+    if (embeddedIconData[file]) image.src = embeddedIconData[file];
+  });
+}
+
+function renderElementIcon(element) {
+  const file = ELEMENT_ICONS[element] || CATEGORY_ICONS.neutral;
+  return iconImg(file, element);
+}
+
+function renderRarityIcon(rarity) {
+  const file = RARITY_ICONS[rarity];
+  return file ? iconImg(file, rarity, "inline-icon rarity-icon-img") : escapeHtml(rarity || "-");
+}
+
+function renderCost(value) {
+  return escapeHtml(value).replace(/[無火水地風複□]/g, (token) => {
+    if (token === "□") return iconImg(CARD_ICONS["□"], "カード条件");
+    return renderElementIcon(token);
+  });
+}
+
+function renderPlacementRestriction(value) {
+  if (!value || value === "-") return "-";
+  return Array.from(value)
+    .map((token) => {
+      const file = ELEMENT_RESTRICTION_ICONS[token];
+      return file ? iconImg(file, `${token}配置制限`) : escapeHtml(token);
+    })
+    .join("");
+}
+
+function renderUsageRestriction(value) {
+  if (!value || value === "-") return "-";
+  return Array.from(value)
+    .map((token) => {
+      const file = USAGE_RESTRICTION_ICONS[token];
+      return file ? iconImg(file, `${token}使用制限`) : escapeHtml(token);
+    })
+    .join("");
+}
+
+function renderEffect(value) {
+  let html = escapeHtml(value || "-");
+  html = html.replace(/[(（]([無火水地風複])([)）])/g, (_, token) => `(${renderElementIcon(token)})`);
+  html = html.replace(/[｛{]([無火水地風複])[｝}]/g, (_, token) => renderElementIcon(token));
+  html = html.replace(/([無火水地風複])属性/g, (_, token) => `${renderElementIcon(token)}属性`);
+  html = html.replace(/[(（]呪([)）])/g, `(${iconImg(CARD_ICONS["呪"], "呪")})`);
+  html = html.replace(/[｛{]呪[｝}]/g, iconImg(CARD_ICONS["呪"], "呪"));
+  html = html.replace(/呪スペル/g, `${iconImg(CARD_ICONS["呪"], "呪")}スペル`);
+  html = html.replace(/□/g, iconImg(CARD_ICONS["□"], "カード条件"));
+  return html;
+}
+
+const els = {
+  displayName: document.querySelector("#displayName"),
+  cardGrid: document.querySelector("#cardGrid"),
+  cardSearch: document.querySelector("#cardSearch"),
+  savedBookSelect: document.querySelector("#savedBookSelect"),
+  deleteBook: document.querySelector("#deleteBook"),
+  bookRegistration: document.querySelector("#bookRegistration"),
+  bookName: document.querySelector("#bookName"),
+  newBook: document.querySelector("#newBook"),
+  saveBook: document.querySelector("#saveBook"),
+  cancelBookRegistration: document.querySelector("#cancelBookRegistration"),
+  bookStatus: document.querySelector("#bookStatus"),
+  bookCountStatus: document.querySelector("#bookCountStatus"),
+  bookCount: document.querySelector("#bookCount"),
+  bookMeter: document.querySelector("#bookMeter"),
+  stickyBookCountStatus: document.querySelector("#stickyBookCountStatus"),
+  stickyBookCount: document.querySelector("#stickyBookCount"),
+  stickyBookMeter: document.querySelector("#stickyBookMeter"),
+  bookBreakdown: document.querySelector("#bookBreakdown"),
+  skillText: document.querySelector("#skillText"),
+  knowledgeReferenceIds: document.querySelector("#knowledgeReferenceIds"),
+  strategyCopySource: document.querySelector("#strategyCopySource"),
+  copyStrategyFromBook: document.querySelector("#copyStrategyFromBook"),
+  questionText: document.querySelector("#questionText"),
+  promptPreview: document.querySelector("#promptPreview"),
+  copyPrompt: document.querySelector("#copyPrompt"),
+  makeShareUrl: document.querySelector("#makeShareUrl"),
+  shareUrl: document.querySelector("#shareUrl"),
+  copyStatus: document.querySelector("#copyStatus"),
+  applyBookChanges: document.querySelector("#applyBookChanges"),
+  brandHome: document.querySelector("#brandHome"),
+  headerLogin: document.querySelector("#headerLogin"),
+  headerUserName: document.querySelector("#headerUserName"),
+  headerLogout: document.querySelector("#headerLogout"),
+  menuToggle: document.querySelector("#menuToggle"),
+  siteMenu: document.querySelector("#siteMenu"),
+  startRegistration: document.querySelector("#startRegistration"),
+  startGuest: document.querySelector("#startGuest"),
+  startLogin: document.querySelector("#startLogin"),
+  loginForm: document.querySelector("#loginForm"),
+  loginName: document.querySelector("#loginName"),
+  loginPassword: document.querySelector("#loginPassword"),
+  loginToRegistration: document.querySelector("#loginToRegistration"),
+  forgotPassword: document.querySelector("#forgotPassword"),
+  passwordResetNotice: document.querySelector("#passwordResetNotice"),
+  authStatus: document.querySelector("#authStatus"),
+  registrationForm: document.querySelector("#registrationForm"),
+  registerUserName: document.querySelector("#registerUserName"),
+  registerEmail: document.querySelector("#registerEmail"),
+  registerPassword: document.querySelector("#registerPassword"),
+  registerStatus: document.querySelector("#registerStatus"),
+  backToLanding: document.querySelector("#backToLanding"),
+  registeredMode: document.querySelector("#registeredMode"),
+  knowledgeForm: document.querySelector("#knowledgeForm"),
+  knowledgeModeHint: document.querySelector("#knowledgeModeHint"),
+  knowledgeTitle: document.querySelector("#knowledgeTitle"),
+  knowledgeViewpoint: document.querySelector("#knowledgeViewpoint"),
+  knowledgeCard1: document.querySelector("#knowledgeCard1"),
+  knowledgeCard2: document.querySelector("#knowledgeCard2"),
+  knowledgeCard3: document.querySelector("#knowledgeCard3"),
+  knowledgeCardOptions: document.querySelector("#knowledgeCardOptions"),
+  knowledgeComment: document.querySelector("#knowledgeComment"),
+  knowledgeVisibility: document.querySelector("#knowledgeVisibility"),
+  knowledgeStatus: document.querySelector("#knowledgeStatus"),
+  knowledgeSearch: document.querySelector("#knowledgeSearch"),
+  knowledgeList: document.querySelector("#knowledgeList"),
+  knowledgeComposeToggle: document.querySelector("#knowledgeComposeToggle"),
+  knowledgeComposeClose: document.querySelector("#knowledgeComposeClose"),
+  currentBadgeSummary: document.querySelector("#currentBadgeSummary"),
+  currentBookLabels: [...document.querySelectorAll("[data-current-book-name]")],
+};
+
+const mobileTabs = [...document.querySelectorAll("[data-mobile-tab]")];
+const mobilePanes = [...document.querySelectorAll("[data-mobile-pane]")];
+const mobilePaneMedia = window.matchMedia("(max-width: 760px)");
+let mobilePaneResizeTimer = 0;
+let remoteSyncTimer = 0;
+let remoteSyncInFlight = false;
+
+function absoluteUrl(path) {
+  return new URL(path, location.href).href;
+}
+
+function parseKind(rawKind) {
+  const value = rawKind || "";
+  const rarityMatch = value.match(/[NSRE]$/);
+  const rarity = rarityMatch ? rarityMatch[0] : "-";
+  const element = value.slice(0, 1) || "無";
+  return { element, rarity };
+}
 
 function displayElementForCard(card) {
   if (card.category === "アイテム") return "アイテム";
