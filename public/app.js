@@ -95,6 +95,7 @@ const BOOK_DATA_FILES = [
 const INITIAL_OWNED_URL = "./assets/bookdata/initial-owned.txt";
 const STORAGE_KEY = "cepter-prompt-atelier-state-v3";
 const GUEST_KEY_STORAGE_KEY = "cepter-prompt-atelier-guest-key-v1";
+const INITIAL_DATA_VERSION = "20260620-initial-book-repair1";
 const BOOK_SIZE = 40;
 const DEFAULT_BOOK_ID = "starter-water-air";
 const DEFAULT_BOOK_NAME = "ブック水風";
@@ -429,6 +430,51 @@ function normalizeBookCards(book) {
     ...book,
     cards: normalizeCardCountMap(book?.cards || {}),
   };
+}
+
+function cardCountTotal(counts) {
+  return Object.values(counts || {}).reduce((sum, count) => sum + Number(count || 0), 0);
+}
+
+function cardCountByCategory(counts, categories) {
+  const wanted = new Set(categories);
+  return Object.entries(counts || {}).reduce((sum, [cardId, count]) => {
+    const card = state.cards.find((item) => item.id === cardId);
+    return card && wanted.has(card.category) ? sum + Number(count || 0) : sum;
+  }, 0);
+}
+
+function defaultBookForStoredBook(book) {
+  return state.defaultBooks.find((defaultBook) => defaultBook.id === book?.id || defaultBook.name === book?.name);
+}
+
+function isCorruptedInitialCardMap(counts, defaultCounts) {
+  const normalized = normalizeCardCountMap(counts || {});
+  const defaultTotal = cardCountTotal(defaultCounts);
+  const currentTotal = cardCountTotal(normalized);
+  if (!defaultTotal) return false;
+  if (currentTotal === 0) return true;
+  if (currentTotal >= defaultTotal) return false;
+  const itemSpellCopies = cardCountByCategory(normalized, ["アイテム", "スペル"]);
+  const defaultItemSpellCopies = cardCountByCategory(defaultCounts, ["アイテム", "スペル"]);
+  return defaultItemSpellCopies > 0 && itemSpellCopies === 0;
+}
+
+function repairInitialBookIfCorrupted(book) {
+  const normalizedBook = normalizeBookCards(book);
+  const defaultBook = defaultBookForStoredBook(normalizedBook);
+  if (!defaultBook || !isCorruptedInitialCardMap(normalizedBook.cards, defaultBook.cards)) {
+    return normalizedBook;
+  }
+  return {
+    ...normalizedBook,
+    name: normalizedBook.name || defaultBook.name,
+    cards: { ...defaultBook.cards },
+  };
+}
+
+function shouldRepairInitialOwnedCards(counts) {
+  return isCorruptedInitialCardMap(counts, state.defaultOwnedByCardId);
 }
 
 async function loadCards() {
@@ -867,8 +913,7 @@ async function repairEmptyRemoteDefaultBooks(remoteBooks, cardsByBookId) {
   for (const remoteBook of remoteBooks) {
     const defaultBook = defaultBookByName(remoteBook.name);
     const currentCards = cardsByBookId.get(remoteBook.id) || {};
-    const currentCopies = Object.values(currentCards).reduce((sum, count) => sum + Number(count || 0), 0);
-    if (!defaultBook || currentCopies > 2) continue;
+    if (!defaultBook || !isCorruptedInitialCardMap(currentCards, defaultBook.cards)) continue;
     await supabaseClient.from("book_cards").delete().eq("book_id", remoteBook.id);
     await insertRemoteBookCards(remoteBook.id, defaultBook.cards);
     cardsByBookId.set(remoteBook.id, { ...defaultBook.cards });
@@ -878,9 +923,14 @@ async function repairEmptyRemoteDefaultBooks(remoteBooks, cardsByBookId) {
 }
 
 async function repairEmptyRemoteOwnedCards(remoteOwned) {
-  const positiveRows = (remoteOwned || []).filter((row) => Number(row.owned_count || 0) > 0);
-  const positiveTotal = positiveRows.reduce((sum, row) => sum + Number(row.owned_count || 0), 0);
-  if (positiveRows.length > 2 && positiveTotal > 2) return false;
+  const currentOwned = normalizeCardCountMap(
+    Object.fromEntries(
+      (remoteOwned || [])
+        .filter((row) => Number(row.owned_count || 0) > 0)
+        .map((row) => [row.card_id, Number(row.owned_count || 0)]),
+    ),
+  );
+  if (!shouldRepairInitialOwnedCards(currentOwned)) return false;
   const ownedRows = Object.entries(state.defaultOwnedByCardId || {})
     .filter(([, count]) => Number(count) > 0)
     .map(([cardId, count]) => ({
@@ -989,6 +1039,7 @@ async function loadRemoteUserData() {
       currentBookId: state.currentBookId,
       ownedByCardId: state.ownedByCardId,
       books: state.books,
+      initialDataVersion: INITIAL_DATA_VERSION,
       isRegistered: state.isRegistered,
       userName: state.userName,
       knowledgePosts: state.knowledgePosts,
@@ -1100,6 +1151,7 @@ function persistAppState(options = {}) {
     currentBookId: state.currentBookId,
     ownedByCardId: state.ownedByCardId,
     books: state.books,
+    initialDataVersion: INITIAL_DATA_VERSION,
     isRegistered: state.isRegistered,
     userName: state.userName,
     knowledgePosts: state.knowledgePosts,
@@ -1113,11 +1165,21 @@ function initializeStoredState() {
   const saved = safeParseJson(localStorage.getItem(STORAGE_KEY));
   const savedSkillText = typeof saved?.skillText === "string" ? ensureProfileHeadings(saved.skillText) : ensureProfileHeadings(els.skillText.value);
   state.isRegistered = Boolean(saved?.isRegistered);
+  const refreshGuestInitialData = Boolean(saved) && !state.isRegistered && saved.initialDataVersion !== INITIAL_DATA_VERSION;
+  let repairedInitialData = false;
 
-  state.books = Array.isArray(saved?.books) && saved.books.length ? saved.books.map(normalizeBookCards) : state.defaultBooks.map(normalizeBookCards);
+  state.books = Array.isArray(saved?.books) && saved.books.length
+    ? saved.books.map((book) => {
+        const before = normalizeBookCards(book);
+        const after = repairInitialBookIfCorrupted(book);
+        if (cardCountTotal(before.cards) !== cardCountTotal(after.cards)) repairedInitialData = true;
+        return after;
+      })
+    : state.defaultBooks.map(normalizeBookCards);
   for (const defaultBook of state.defaultBooks) {
     if (!state.books.some((book) => book.id === defaultBook.id)) {
-      state.books.push(defaultBook);
+      state.books.push(normalizeBookCards(defaultBook));
+      repairedInitialData = true;
     }
   }
   state.books = state.books.map((book) => ({
@@ -1138,6 +1200,10 @@ function initializeStoredState() {
   state.ownedByCardId = normalizeCardCountMap(
     saved?.ownedByCardId && typeof saved.ownedByCardId === "object" ? saved.ownedByCardId : state.defaultOwnedByCardId,
   );
+  if (refreshGuestInitialData || shouldRepairInitialOwnedCards(state.ownedByCardId)) {
+    state.ownedByCardId = normalizeCardCountMap(state.defaultOwnedByCardId);
+    repairedInitialData = true;
+  }
   state.userName = typeof saved?.userName === "string" ? saved.userName : "";
   state.knowledgePosts =
     Array.isArray(saved?.knowledgePosts) && saved.knowledgePosts.length
@@ -1155,6 +1221,7 @@ function initializeStoredState() {
   updateKnowledgeMode();
   renderKnowledgePosts();
   renderBookSelect();
+  if (repairedInitialData) persistAppState({ sync: false });
 }
 
 function renderBookSelect() {
@@ -2478,6 +2545,7 @@ els.applyBookChanges?.addEventListener("click", async () => {
         currentBookId: state.currentBookId,
         ownedByCardId: state.ownedByCardId,
         books: state.books,
+        initialDataVersion: INITIAL_DATA_VERSION,
         isRegistered: state.isRegistered,
         userName: state.userName,
         knowledgePosts: state.knowledgePosts,
