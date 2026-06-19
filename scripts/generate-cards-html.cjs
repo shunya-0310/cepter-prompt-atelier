@@ -82,6 +82,8 @@ const html = `<!doctype html>
       a { color: var(--gold); }
       .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 64px; }
       header { border-bottom: 1px solid var(--line); margin-bottom: 28px; padding-bottom: 22px; }
+      .back-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); padding: 7px 10px; text-decoration: none; background: rgba(6, 29, 23, 0.8); margin-bottom: 16px; }
+      .back-link:hover { background: rgba(244, 211, 111, 0.12); }
       .kicker { color: var(--gold); font-family: Consolas, "Courier New", monospace; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
       h1, h2 { margin: 0; color: var(--text); letter-spacing: 0; }
       h1 { margin-top: 8px; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.18; }
@@ -106,6 +108,7 @@ const html = `<!doctype html>
   <body>
     <main class="page">
       <header>
+        <a class="back-link" href="./">Cepter Prompt Atelierに戻る</a>
         <span class="kicker">AI Readable Card Database</span>
         <h1>カルドセプト ビギンズ<br />カードデータベース</h1>
         <p class="lead">このページは、AIがカルドセプト ビギンズのブック相談を行う際に参照しやすいよう、カードデータをJavaScriptなしのHTML本文として掲載しています。</p>

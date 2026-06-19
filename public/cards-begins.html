@@ -18,6 +18,8 @@
       a { color: var(--gold); }
       .page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 64px; }
       header { border-bottom: 1px solid var(--line); margin-bottom: 28px; padding-bottom: 22px; }
+      .back-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); padding: 7px 10px; text-decoration: none; background: rgba(6, 29, 23, 0.8); margin-bottom: 16px; }
+      .back-link:hover { background: rgba(244, 211, 111, 0.12); }
       .kicker { color: var(--gold); font-family: Consolas, "Courier New", monospace; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
       h1, h2 { margin: 0; color: var(--text); letter-spacing: 0; }
       h1 { margin-top: 8px; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.18; }
@@ -42,6 +44,7 @@
   <body>
     <main class="page">
       <header>
+        <a class="back-link" href="./">Cepter Prompt Atelierに戻る</a>
         <span class="kicker">AI Readable Card Database</span>
         <h1>カルドセプト ビギンズ<br />カードデータベース</h1>
         <p class="lead">このページは、AIがカルドセプト ビギンズのブック相談を行う際に参照しやすいよう、カードデータをJavaScriptなしのHTML本文として掲載しています。</p>
@@ -49,9 +52,9 @@
 
       <section class="summary" aria-label="データ概要">
         <div><strong>ゲーム</strong>カルドセプト ビギンズ</div>
-        <div><strong>カード件数</strong>238 件</div>
+        <div><strong>カード件数</strong>291 件</div>
         <div><strong>データ形式</strong>HTML table</div>
-        <div><strong>生成日</strong>2026-06-18</div>
+        <div><strong>生成日</strong>2026-06-19</div>
       </section>
 
       <nav class="toc" aria-label="カード分類">
@@ -82,7 +85,7 @@
                 <tr><th scope="row">クレリック</th><td>ビギンズ</td><td>無S</td><td>G50</td><td>10 / 30</td><td>-</td><td>-</td><td>援護 : 即死[{無}]</td></tr>
                 <tr><th scope="row">ゴールドトーテム</th><td>ビギンズ</td><td>無N</td><td>G0</td><td>0 / 30</td><td>-</td><td>武</td><td>防御型；領地能力[使用者にG200を与え、これは破壊される(G0)]</td></tr>
                 <tr><th scope="row">ゴブリン</th><td>ビギンズ</td><td>無N</td><td>G0</td><td>20 / 30</td><td>-</td><td>-</td><td>-</td></tr>
-                <tr><th scope="row">コロッサス</th><td>ビギンズ</td><td>無R</td><td>G120</td><td>70 / 70</td><td>-</td><td>武防道巻</td><td>周回回復できない : {呪}スペルの対象に選べない</td></tr>
+                <tr><th scope="row">コロッサス</th><td>ビギンズ</td><td>無R</td><td>G110</td><td>70 / 70</td><td>-</td><td>武防道巻</td><td>後手 ; 周回ボーナスで回復しない</td></tr>
                 <tr><th scope="row">サムライ</th><td>ビギンズ</td><td>無S</td><td>G50</td><td>50 / 30</td><td>-</td><td>-</td><td>即死[ST40以上・70%]</td></tr>
                 <tr><th scope="row">シーフ</th><td>ビギンズ</td><td>無N</td><td>G30</td><td>20 / 40</td><td>-</td><td>-</td><td>アイテムを使用しない場合、戦闘開始時、戦闘相手のアイテムを奪う</td></tr>
                 <tr><th scope="row">ジャイアントスパイダー</th><td>ビギンズ</td><td>無N</td><td>G10</td><td>10 / 30</td><td>-</td><td>巻</td><td>攻撃成功時、{人}{獣}{竜}クリーチャーにマヒの{呪}効果を付ける</td></tr>
@@ -91,10 +94,10 @@
                 <tr><th scope="row">スタチュー</th><td>ビギンズ</td><td>無N</td><td>G10</td><td>0 / 50</td><td>-</td><td>武防巻</td><td>防御型；周回ボーナスで回復しない</td></tr>
                 <tr><th scope="row">スチームギア</th><td>ビギンズ</td><td>無S</td><td>G60</td><td>50 / 50</td><td>-</td><td>巻</td><td>このクリーチャーを配置した領地の通行料は0.5倍になる</td></tr>
                 <tr><th scope="row">ゾンビ</th><td>ビギンズ</td><td>無N</td><td>G20</td><td>20 / 50</td><td>-</td><td>巻</td><td>戦闘終了時、HPが20減少する</td></tr>
-                <tr><th scope="row">ティラノサウルス</th><td>ビギンズ</td><td>無S</td><td>G75</td><td>50 / 60</td><td>-</td><td>防巻</td><td>-</td></tr>
-                <tr><th scope="row">デコイ</th><td>ビギンズ</td><td>無R</td><td>G50+□</td><td>0 / 10</td><td>-</td><td>武防巻</td><td>反射[通常攻撃]</td></tr>
-                <tr><th scope="row">ドッペルゲンガー</th><td>ビギンズ</td><td>無S</td><td>G10+□</td><td>0 / 30</td><td>-</td><td>-</td><td>戦闘中、対戦相手と同じクリーチャーに変身する</td></tr>
-                <tr><th scope="row">トロージャンホース</th><td>ビギンズ</td><td>無N</td><td>G30</td><td>0 / 30</td><td>-</td><td>武防巻</td><td>援護[全]・貫通[全]</td></tr>
+                <tr><th scope="row">ティラノサウルス</th><td>ビギンズ</td><td>無S</td><td>G60+□</td><td>50 / 60</td><td>-</td><td>防巻</td><td>-</td></tr>
+                <tr><th scope="row">デコイ</th><td>ビギンズ</td><td>無S</td><td>G40+□</td><td>0 / 10</td><td>-</td><td>武防巻</td><td>攻撃反射</td></tr>
+                <tr><th scope="row">ドッペルゲンガー</th><td>ビギンズ</td><td>無S</td><td>G20+□</td><td>0 / 30</td><td>-</td><td>-</td><td>戦闘中、相手クリーチャーと同じクリーチャーに変身する</td></tr>
+                <tr><th scope="row">トロージャンホース</th><td>ビギンズ</td><td>無S</td><td>G50</td><td>0 / 30</td><td>-</td><td>武防巻</td><td>援護 ; 貫通</td></tr>
                 <tr><th scope="row">ニンジャ</th><td>ビギンズ</td><td>無R</td><td>G60</td><td>40 / 40</td><td>-</td><td>-</td><td>先制；魔術強打</td></tr>
                 <tr><th scope="row">バトルギアα</th><td>ビギンズ</td><td>無S</td><td>G60</td><td>40 / 20</td><td>-</td><td>巻</td><td>援護 : &quot;バトルギアβ&quot;と合体 : 防魔</td></tr>
                 <tr><th scope="row">バトルギアβ</th><td>ビギンズ</td><td>無S</td><td>G60</td><td>20 / 40</td><td>-</td><td>巻</td><td>援護 : &quot;バトルギアα&quot;と合体 : 無効化[巻物攻撃]</td></tr>
@@ -104,12 +107,12 @@
                 <tr><th scope="row">ビーコンタワー</th><td>ビギンズ</td><td>無</td><td>?</td><td>- / -</td><td>-</td><td>-</td><td>-</td></tr>
                 <tr><th scope="row">ファイター</th><td>ビギンズ</td><td>無N</td><td>G30</td><td>40 / 40</td><td>-</td><td>-</td><td>-</td></tr>
                 <tr><th scope="row">ボージェス</th><td>ビギンズ</td><td>無R</td><td>G40</td><td>30 / 30</td><td>-</td><td>-</td><td>応援[{無}・HP+20]</td></tr>
-                <tr><th scope="row">ホーンカメレオン</th><td>ビギンズ</td><td>無N</td><td>G40</td><td>20 / 30</td><td>-</td><td>巻</td><td>どの属性の領地からも地形効果を得る</td></tr>
+                <tr><th scope="row">ホーンカメレオン</th><td>ビギンズ</td><td>無N</td><td>G30</td><td>20 / 30</td><td>-</td><td>巻</td><td>どの属性の土地からも地形効果を得る</td></tr>
                 <tr><th scope="row">リトルグレイ</th><td>ビギンズ</td><td>無R</td><td>G50+□</td><td>10 / 30</td><td>-</td><td>-</td><td>攻撃成功時、50%の確率で対戦相手をランダムな空地に飛ばす</td></tr>
-                <tr><th scope="row">ルナティックヘア</th><td>ビギンズ</td><td>無S</td><td>G20</td><td>20 / 30</td><td>-</td><td>-</td><td>戦闘終了時、相手クリーチャーの基本ATとHPを入れ替える</td></tr>
+                <tr><th scope="row">ルナティックヘア</th><td>ビギンズ</td><td>無R</td><td>G20</td><td>20 / 30</td><td>-</td><td>-</td><td>戦闘終了時、相手クリーチャーの基本ATとHPを入れ替える</td></tr>
                 <tr><th scope="row">レッドキャップ</th><td>ビギンズ</td><td>無S</td><td>G30+□</td><td>30 / 30</td><td>-</td><td>-</td><td>戦闘中、ST&amp;HP=(配置&quot;ゴブリン&quot;の数x20) ; 応援[&quot;ゴブリン&quot;・ST+20]</td></tr>
                 <tr><th scope="row">ワーウルフ</th><td>ビギンズ</td><td>無S</td><td>G30+□</td><td>30 / 30</td><td>-</td><td>-</td><td>攻撃成功時、対戦相手を&quot;ウルフ&quot;に変える</td></tr>
-                <tr><th scope="row">ワンダーウォール</th><td>ビギンズ</td><td>無S</td><td>G10+□</td><td>0 / 30</td><td>-</td><td>武防</td><td>防御型 ; 無効化[{火}{水}{地}{風}]</td></tr>
+                <tr><th scope="row">ワンダーウォール</th><td>ビギンズ</td><td>無R</td><td>G10+□</td><td>0 / 30</td><td>-</td><td>武防</td><td>防御型 ; 攻撃無効[{火}{水}{地}{風}]</td></tr>
               </tbody>
             </table>
           </div>
@@ -117,7 +120,7 @@
 
         <section class="card-section" id="%E7%81%AB%E5%B1%9E%E6%80%A7%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%81%E3%83%A3%E3%83%BC">
           <h2>火属性クリーチャー</h2>
-          <p class="section-count">32 件</p>
+          <p class="section-count">35 件</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -126,36 +129,39 @@
               <tbody>
                 <tr><th scope="row">アベンジャー</th><td>ビギンズ</td><td>火S</td><td>G80</td><td>30 / 30</td><td>-</td><td>-</td><td>戦闘中、ST&amp;HP+(使用者の順位x10)</td></tr>
                 <tr><th scope="row">アレス</th><td>ビギンズ</td><td>火R</td><td>G90+火+火</td><td>50 / 60</td><td>水</td><td>-</td><td>応援[侵略側・ST+20]</td></tr>
-                <tr><th scope="row">ウィルオウィスプ</th><td>ビギンズ</td><td>火S</td><td>G60</td><td>10 / 50</td><td>-</td><td>武</td><td>後手 : 攻撃成功時、相手セプターから残りHPxG2の魔力を奪う</td></tr>
+                <tr><th scope="row">ウィルオウィスプ</th><td>ビギンズ</td><td>火S</td><td>G60</td><td>10 / 50</td><td>-</td><td>武</td><td>後手 : 攻撃成功時、相手セプターからこのクリーチャーの残りHPxG2の魔力を奪う</td></tr>
                 <tr><th scope="row">エグゼクター</th><td>ビギンズ</td><td>火N</td><td>G40+□</td><td>70 / 20</td><td>-</td><td>武</td><td>-</td></tr>
-                <tr><th scope="row">オールドウィロウ</th><td>ビギンズ</td><td>火R</td><td>G70+火+火</td><td>20 / 40</td><td>-</td><td>武道巻</td><td>防御型 ; {火}土地に配置した場合、通過する敵セプターを止まらせる</td></tr>
-                <tr><th scope="row">ガスクラウド</th><td>ビギンズ</td><td>火N</td><td>G45</td><td>30 / 30</td><td>-</td><td>防</td><td>無効化[通常攻撃・受けるダメージの1/2]</td></tr>
-                <tr><th scope="row">キメラ</th><td>ビギンズ</td><td>火N</td><td>G80+火</td><td>30 / 50</td><td>-</td><td>巻</td><td>先制 ; 使用者が周回完了するごとにST+10 (最大100)</td></tr>
-                <tr><th scope="row">キングバラン</th><td>ビギンズ</td><td>火N</td><td>G100</td><td>60 / 50</td><td>-</td><td>巻</td><td>-</td></tr>
+                <tr><th scope="row">オールドウィロウ</th><td>ビギンズ</td><td>火R</td><td>G40+火+火</td><td>20 / 40</td><td>-</td><td>武道巻</td><td>防御型 ; {火}土地に配置した場合、使用者以外の通過セプターをその領地に止まらせる</td></tr>
+                <tr><th scope="row">ガスクラウド</th><td>ビギンズ</td><td>火N</td><td>G40</td><td>30 / 30</td><td>-</td><td>防</td><td>無効化[通常攻撃・ダメージの50%]</td></tr>
+                <tr><th scope="row">キメラ</th><td>ビギンズ</td><td>火S</td><td>G80+火</td><td>30 / 50</td><td>-</td><td>巻</td><td>先制 ; 使用者が周回ボーナスを得る度に、配置されているこのクリーチャーの基本ATが10増加する</td></tr>
+                <tr><th scope="row">キングバラン</th><td>ビギンズ</td><td>火S</td><td>G90</td><td>60 / 50</td><td>-</td><td>巻</td><td>-</td></tr>
                 <tr><th scope="row">グラディエーター</th><td>ビギンズ</td><td>火N</td><td>G75</td><td>40 / 40</td><td>-</td><td>防巻</td><td>強打[{火}{水}{地}{風}]</td></tr>
-                <tr><th scope="row">ケットシー</th><td>ビギンズ</td><td>火N</td><td>G50</td><td>20 / 30</td><td>水</td><td>-</td><td>無効化[ST40以上] ; 防魔</td></tr>
+                <tr><th scope="row">ケットシー</th><td>ビギンズ</td><td>火S</td><td>G50</td><td>20 / 30</td><td>水</td><td>-</td><td>防魔 ; 攻撃無効[基本AT40以上]</td></tr>
                 <tr><th scope="row">ケマゾツ</th><td>ビギンズ</td><td>火S</td><td>G50+火</td><td>20 / 40</td><td>-</td><td>防</td><td>戦闘中、ST+(対戦相手のST) : 敵破壊時、相手セプターは最も多く持つ護符1種を30%失う</td></tr>
-                <tr><th scope="row">ゴーレム</th><td>ビギンズ</td><td>火N</td><td>G70</td><td>40 / 50</td><td>-</td><td>-</td><td>戦闘終了時、ST-10</td></tr>
+                <tr><th scope="row">ゴーレム</th><td>ビギンズ</td><td>火N</td><td>G70</td><td>40 / 50</td><td>-</td><td>-</td><td>戦闘終了時、基本ATが10減少する</td></tr>
                 <tr><th scope="row">コボルド</th><td>ビギンズ</td><td>火N</td><td>G20</td><td>20 / 30</td><td>-</td><td>-</td><td>-</td></tr>
                 <tr><th scope="row">コンジャラー</th><td>ビギンズ</td><td>火S</td><td>G45</td><td>20 / 30</td><td>-</td><td>武</td><td>巻物強打[全] ; 秘術[G80・選んだ空地に&quot;バ=アル&quot;を配置し、これは破壊される]</td></tr>
-                <tr><th scope="row">サラマンダー</th><td>ビギンズ</td><td>火N</td><td>G70+火</td><td>40 / 50</td><td>水</td><td>防</td><td>攻撃無効[{火}]；(無効にしたダメージ分、HPが増加する)</td></tr>
+                <tr><th scope="row">サラマンダー</th><td>ビギンズ</td><td>火N</td><td>G60+火</td><td>40 / 50</td><td>水</td><td>防</td><td>攻撃無効[{火}]；このクリーチャーの攻撃無効の発動時、HP+(無効にしたダメージ)</td></tr>
                 <tr><th scope="row">シャラザード</th><td>ビギンズ</td><td>火S</td><td>G50</td><td>20 / 30</td><td>-</td><td>-</td><td>援護[{火}{地}] ; 秘術[G30・全てのセプターについた{呪}を消す]</td></tr>
                 <tr><th scope="row">ソン＝ギョウジャ</th><td>ビギンズ</td><td>火R</td><td>G60</td><td>0 / 30</td><td>-</td><td>-</td><td>援護 : 援護クリーチャーの能力を発動させる</td></tr>
                 <tr><th scope="row">ドモビー</th><td>ビギンズ</td><td>火S</td><td>G20</td><td>10 / 20</td><td>-</td><td>-</td><td>秘術[G80・対象自クリーチャーに{呪}&quot;防魔&quot;をつける]</td></tr>
                 <tr><th scope="row">ドモボーイ</th><td>ビギンズ</td><td>火S</td><td>G10</td><td>20 / 20</td><td>-</td><td>-</td><td>領地[G30・対象の領地に&quot;ファンタズム&quot;の{呪}効果を付ける]</td></tr>
-                <tr><th scope="row">ドラゴン</th><td>ビギンズ</td><td>火R</td><td>G100+火+火</td><td>40 / 60</td><td>水</td><td>防</td><td>先制 : 侵略側の場合、戦闘中、ST+20、HP-20</td></tr>
+                <tr><th scope="row">ドラゴン</th><td>ビギンズ</td><td>火R</td><td>G90+火+火</td><td>40 / 60</td><td>水</td><td>防</td><td>先制 : 侵略側の場合、戦闘中、AT+20、HP-20</td></tr>
                 <tr><th scope="row">ドラゴンフライ</th><td>ビギンズ</td><td>火N</td><td>G20</td><td>30 / 20</td><td>-</td><td>巻</td><td>先制</td></tr>
-                <tr><th scope="row">バ＝アル</th><td>ビギンズ</td><td>火N</td><td>G40+火+□</td><td>50 / 50</td><td>-</td><td>-</td><td>先制 ; 戦闘終了時、使用者の手札をランダムに1枚破壊する</td></tr>
-                <tr><th scope="row">バルキリー</th><td>ビギンズ</td><td>火S</td><td>G70+火</td><td>30 / 30</td><td>-</td><td>-</td><td>援護[{無}{火}{地}] ; 先制 ; 敵破壊時、ST+10 (最大100)</td></tr>
+                <tr><th scope="row">バ＝アル</th><td>ビギンズ</td><td>火S</td><td>G60+火+□</td><td>50 / 50</td><td>-</td><td>-</td><td>先制 ; 戦闘終了時、使用者の手札をランダムに1枚破壊する</td></tr>
+                <tr><th scope="row">バルキリー</th><td>ビギンズ</td><td>火S</td><td>G60+火</td><td>30 / 30</td><td>-</td><td>-</td><td>援護[{無}{火}{地}] ; 先制 ; 戦闘で相手クリーチャーを破壊した時、基本ATが10増加する</td></tr>
                 <tr><th scope="row">ピラーフレイム</th><td>ビギンズ</td><td>火N</td><td>G30</td><td>30 / 50</td><td>-</td><td>防巻</td><td>防御型</td></tr>
-                <tr><th scope="row">ファイアージャイアント</th><td>ビギンズ</td><td>火N</td><td>G95+火</td><td>50 / 50</td><td>-</td><td>-</td><td>強打[{水}]</td></tr>
+                <tr><th scope="row">ファイアージャイアント</th><td>ビギンズ</td><td>火N</td><td>G80+火</td><td>50 / 50</td><td>-</td><td>-</td><td>強打[{水}]</td></tr>
                 <tr><th scope="row">ファイアービーク</th><td>ビギンズ</td><td>火R</td><td>G95+火</td><td>50 / 40</td><td>-</td><td>防巻</td><td>先制 ; 貫通[{水}{風}] ; 強打[{水}{風}]</td></tr>
                 <tr><th scope="row">フェイ</th><td>ビギンズ</td><td>火N</td><td>G70</td><td>20 / 40</td><td>水</td><td>-</td><td>巻物強打[全] ; 秘術[G50・対象クリーチャーのST+20 (最大100)]</td></tr>
                 <tr><th scope="row">フェニックス</th><td>ビギンズ</td><td>火N</td><td>G40</td><td>30 / 30</td><td>-</td><td>巻</td><td>戦闘で破壊された時、手札に復帰する</td></tr>
                 <tr><th scope="row">フレイムアコライト</th><td>ビギンズ</td><td>火</td><td>?</td><td>- / -</td><td>-</td><td>-</td><td>-</td></tr>
                 <tr><th scope="row">フレイムロード</th><td>ビギンズ</td><td>火R</td><td>G140+火+火+□</td><td>70 / 70</td><td>水</td><td>-</td><td>応援[{火}・HP+10] : 戦闘終了時、使用者はG100の魔力を失う</td></tr>
-                <tr><th scope="row">ヘルハウンド</th><td>ビギンズ</td><td>火N</td><td>G80</td><td>50 / 40</td><td>-</td><td>-</td><td>{水}クリーチャーに対し1/2のダメージしか与えられない</td></tr>
+                <tr><th scope="row">ヘルハウンド</th><td>ビギンズ</td><td>火N</td><td>G60</td><td>50 / 40</td><td>-</td><td>-</td><td>{水}クリーチャーに対して50%のダメージしか与えられない</td></tr>
+                <tr><th scope="row">マンティコア</th><td>ビギンズ</td><td>火N</td><td>G80</td><td>40 / 50</td><td>-</td><td>-</td><td>戦闘中、AT&amp;HP=(使用者の手札の数×10)</td></tr>
+                <tr><th scope="row">マトックテイル</th><td>ビギンズ</td><td>火S</td><td>G70+火</td><td>30 / 40</td><td>-</td><td>-</td><td>先制 ; 戦闘で相手クリーチャーを破壊した時、戦闘が行われた領地のレベルを1上げる</td></tr>
                 <tr><th scope="row">ミノタウロス</th><td>ビギンズ</td><td>火N</td><td>G60</td><td>40 / 40</td><td>-</td><td>-</td><td>-</td></tr>
+                <tr><th scope="row">ラーバワーム</th><td>ビギンズ</td><td>火S</td><td>G60+火</td><td>40 / 50</td><td>-</td><td>防</td><td>援護[{火}]</td></tr>
               </tbody>
             </table>
           </div>
@@ -163,33 +169,42 @@
 
         <section class="card-section" id="%E6%B0%B4%E5%B1%9E%E6%80%A7%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%81%E3%83%A3%E3%83%BC">
           <h2>水属性クリーチャー</h2>
-          <p class="section-count">20 件</p>
+          <p class="section-count">29 件</p>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr><th>カード名</th><th>作品</th><th>種類</th><th>コスト</th><th>AT / HP</th><th>配置制限</th><th>使用制限</th><th>能力・効果</th></tr>
               </thead>
               <tbody>
-                <tr><th scope="row">アイスウォール</th><td>ビギンズ</td><td>水N</td><td>G30</td><td>0 / 40</td><td>-</td><td>防巻</td><td>防御型；戦闘開始時、HP+20</td></tr>
-                <tr><th scope="row">アヌビアス</th><td>ビギンズ</td><td>水S</td><td>G60+水</td><td>30 / 50</td><td>火</td><td>-</td><td>戦闘中、HP=(今までに破壊されたクリーチャーの数x5)</td></tr>
+                <tr><th scope="row">アイスウォール</th><td>ビギンズ</td><td>水N</td><td>G30</td><td>0 / 40</td><td>-</td><td>防巻</td><td>防御型 ; 戦闘中、HP+20</td></tr>
+                <tr><th scope="row">アスピドケロン</th><td>ビギンズ</td><td>水S</td><td>G60+水</td><td>30 / 40</td><td>地</td><td>巻</td><td>戦闘中、AT&amp;HP+(ラウンド数)</td></tr>
+                <tr><th scope="row">アヌビアス</th><td>ビギンズ</td><td>水S</td><td>G50+水</td><td>30 / 50</td><td>火</td><td>-</td><td>戦闘中、HP=(今までに破壊されたクリーチャーの数x5)</td></tr>
+                <tr><th scope="row">アプサラス</th><td>ビギンズ</td><td>水R</td><td>G40+水</td><td>20 / 30</td><td>-</td><td>武道</td><td>攻撃無効[戦闘が行われた領地がレベル3以上]</td></tr>
+                <tr><th scope="row">アンダイン</th><td>ビギンズ</td><td>水N</td><td>G50</td><td>30 / 30</td><td>-</td><td>防</td><td>攻撃無効[{水}] ; 戦闘中、HP=(使用者の持つ{水}領地数x20)</td></tr>
                 <tr><th scope="row">キングトータス</th><td>ビギンズ</td><td>水N</td><td>G40</td><td>10 / 50</td><td>-</td><td>巻</td><td>後手</td></tr>
                 <tr><th scope="row">クラーケン</th><td>ビギンズ</td><td>水S</td><td>G80+水</td><td>50 / 50</td><td>火</td><td>巻</td><td>使用者が{火}領地を持つ場合、戦闘中、HP-20 : 無効化[{無}]</td></tr>
-                <tr><th scope="row">ケルピー</th><td>ビギンズ</td><td>水S</td><td>G80+水</td><td>30 / 30</td><td>-</td><td>道巻</td><td>{水}土地に配置した場合、通過する敵セプターを止まらせる</td></tr>
+                <tr><th scope="row">ケルピー</th><td>ビギンズ</td><td>水R</td><td>G60+水</td><td>30 / 30</td><td>-</td><td>巻</td><td>{水}土地に配置した場合、使用者以外の通過セプターをその領地に止まらせる</td></tr>
                 <tr><th scope="row">ジャイアントアメーバ</th><td>ビギンズ</td><td>水N</td><td>G50</td><td>30 / 30</td><td>-</td><td>巻</td><td>攻撃無効[{火}{地}]</td></tr>
-                <tr><th scope="row">ジャイアントイール</th><td>ビギンズ</td><td>水N</td><td>G60+水</td><td>30 / 50</td><td>-</td><td>巻</td><td>無効化[{地}{風}]</td></tr>
-                <tr><th scope="row">ジャイアントノーチラス</th><td>ビギンズ</td><td>水N</td><td>G80</td><td>10 / 70</td><td>火</td><td>武巻</td><td>-</td></tr>
+                <tr><th scope="row">ジャイアントイール</th><td>ビギンズ</td><td>水N</td><td>G80</td><td>30 / 50</td><td>-</td><td>巻</td><td>攻撃無効[{地}{風}]</td></tr>
+                <tr><th scope="row">ジャイアントノーチラス</th><td>ビギンズ</td><td>水S</td><td>G80</td><td>10 / 70</td><td>火</td><td>武巻</td><td>-</td></tr>
                 <tr><th scope="row">ストームジャイアント</th><td>ビギンズ</td><td>水N</td><td>G90+水</td><td>40 / 60</td><td>-</td><td>-</td><td>強打[{火}]</td></tr>
-                <tr><th scope="row">ゼラチンウォール</th><td>ビギンズ</td><td>水S</td><td>G30</td><td>10 / 50</td><td>火</td><td>武巻</td><td>防御型 ; 戦闘終了時、使用者は戦闘相手から受けた通常攻撃ダメージxG5を得る</td></tr>
+                <tr><th scope="row">ゼラチンウォール</th><td>ビギンズ</td><td>水N</td><td>G40</td><td>10 / 50</td><td>-</td><td>武巻</td><td>防御型 ; 戦闘終了時、相手クリーチャーから受けた攻撃ダメージxG5の魔力を得る</td></tr>
                 <tr><th scope="row">ダゴン</th><td>ビギンズ</td><td>水R</td><td>G140+水+水+□</td><td>60 / 80</td><td>火</td><td>-</td><td>応援[{水}・HP+10] : 戦闘終了時、使用者はG100の魔力を失う</td></tr>
+                <tr><th scope="row">デスキート</th><td>ビギンズ</td><td>水N</td><td>G50</td><td>30 / 20</td><td>-</td><td>巻</td><td>先制 ; 攻撃成功時、相手セプターの手札をランダムに1枚破壊する</td></tr>
                 <tr><th scope="row">トリトン</th><td>ビギンズ</td><td>水N</td><td>G70</td><td>30 / 40</td><td>-</td><td>-</td><td>巻物強打[全] ; アイテムを使用した場合、戦闘終了時、使用者はカードを1枚引く</td></tr>
-                <tr><th scope="row">ヒドラ</th><td>ビギンズ</td><td>水S</td><td>G90+水</td><td>40 / 50</td><td>-</td><td>防</td><td>戦闘の行われた領地が{火}でない場合、再生</td></tr>
+                <tr><th scope="row">ドルール</th><td>ビギンズ</td><td>水S</td><td>G50</td><td>0 / 30</td><td>-</td><td>武巻</td><td>貫通 ; 戦闘中、AT=(使用者の持つ{水}領地数x10)</td></tr>
+                <tr><th scope="row">ヒドラ</th><td>ビギンズ</td><td>水S</td><td>G90</td><td>40 / 50</td><td>-</td><td>防</td><td>再生 (戦闘の行われた領地が{火}でない場合)</td></tr>
                 <tr><th scope="row">フェイト</th><td>ビギンズ</td><td>水S</td><td>G60</td><td>10 / 40</td><td>-</td><td>-</td><td>自破壊時、使用者はカードを1枚引く ; 秘術[G40・使用者はカードを1枚引く]</td></tr>
+                <tr><th scope="row">パイレート</th><td>ビギンズ</td><td>水N</td><td>G30</td><td>10 / 30</td><td>-</td><td>-</td><td>援護[{無}{水}]</td></tr>
+                <tr><th scope="row">ブラッドプリン</th><td>ビギンズ</td><td>水S</td><td>G30</td><td>20 / 20</td><td>-</td><td>巻</td><td>援護 ; 戦闘開始時、援護したクリーチャーのHP分、最大HPが増加する</td></tr>
                 <tr><th scope="row">ペールグロブスター</th><td>ビギンズ</td><td>水</td><td>?</td><td>- / -</td><td>-</td><td>-</td><td>-</td></tr>
+                <tr><th scope="row">ベヒーモス</th><td>ビギンズ</td><td>水S</td><td>G70+水</td><td>60 / 60</td><td>火</td><td>防巻</td><td>後手 ; 戦闘終了時、使用者の手札をランダムに1枚破壊する</td></tr>
                 <tr><th scope="row">マーフォーク</th><td>ビギンズ</td><td>水N</td><td>G20</td><td>20 / 30</td><td>-</td><td>-</td><td>-</td></tr>
                 <tr><th scope="row">メガロドン</th><td>ビギンズ</td><td>水N</td><td>G60</td><td>50 / 50</td><td>火地風</td><td>巻</td><td>-</td></tr>
+                <tr><th scope="row">メデューサ</th><td>ビギンズ</td><td>水S</td><td>G40+□</td><td>30 / 30</td><td>-</td><td>-</td><td>攻撃成功時、相手クリーチャーを&quot;スタチュー&quot;に変身させる</td></tr>
                 <tr><th scope="row">リザードマン</th><td>ビギンズ</td><td>水N</td><td>G70</td><td>30 / 40</td><td>-</td><td>-</td><td>先制</td></tr>
                 <tr><th scope="row">リバイアサン</th><td>ビギンズ</td><td>水R</td><td>G100+水+水</td><td>40 / 60</td><td>-</td><td>防</td><td>敵破壊時、戦闘が行われた領地を{水}に変える</td></tr>
-                <tr><th scope="row">リリス</th><td>ビギンズ</td><td>水S</td><td>G60</td><td>0 / 30</td><td>-</td><td>-</td><td>先制 ; 戦闘中、ST=(使用者の手札の数x10)</td></tr>
+                <tr><th scope="row">リリス</th><td>ビギンズ</td><td>水S</td><td>G70</td><td>0 / 30</td><td>-</td><td>防</td><td>先制 ; 戦闘中、AT=(使用者の手札の数x10)</td></tr>
               </tbody>
             </table>
           </div>
@@ -231,38 +246,42 @@
 
         <section class="card-section" id="%E9%A2%A8%E5%B1%9E%E6%80%A7%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%81%E3%83%A3%E3%83%BC">
           <h2>風属性クリーチャー</h2>
-          <p class="section-count">25 件</p>
+          <p class="section-count">29 件</p>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr><th>カード名</th><th>作品</th><th>種類</th><th>コスト</th><th>AT / HP</th><th>配置制限</th><th>使用制限</th><th>能力・効果</th></tr>
               </thead>
               <tbody>
-                <tr><th scope="row">ウェンディゴ</th><td>ビギンズ</td><td>風N</td><td>G70</td><td>30 / 50</td><td>-</td><td>-</td><td>攻撃成功時、対戦相手に&quot;フォッグ&quot;の{呪}効果を付ける</td></tr>
-                <tr><th scope="row">エルフ</th><td>ビギンズ</td><td>風N</td><td>G70+風</td><td>40 / 30</td><td>-</td><td>-</td><td>先制 : 強打[{地}]</td></tr>
+                <tr><th scope="row">ウェンディゴ</th><td>ビギンズ</td><td>風N</td><td>G70</td><td>30 / 50</td><td>-</td><td>-</td><td>攻撃成功時、相手クリーチャーに通行料減少の{呪}効果を付ける</td></tr>
+                <tr><th scope="row">エルフ</th><td>ビギンズ</td><td>風N</td><td>G50+風</td><td>40 / 30</td><td>-</td><td>-</td><td>先制 ; 強打[{地}]</td></tr>
                 <tr><th scope="row">ガルーダ</th><td>ビギンズ</td><td>風R</td><td>G40+風+風</td><td>0 / 40</td><td>地</td><td>-</td><td>戦闘中、ST&amp;HP=(配置{風}クリーチャー数x10)</td></tr>
                 <tr><th scope="row">グリフォン</th><td>ビギンズ</td><td>風N</td><td>G80</td><td>50 / 50</td><td>地</td><td>巻</td><td>-</td></tr>
                 <tr><th scope="row">グレムリン</th><td>ビギンズ</td><td>風S</td><td>G60</td><td>20 / 30</td><td>-</td><td>巻</td><td>戦闘開始時、戦闘相手の使用したアイテムを破壊する</td></tr>
                 <tr><th scope="row">ケツァルコアトル</th><td>ビギンズ</td><td>風S</td><td>G60+風</td><td>30 / 50</td><td>-</td><td>-</td><td>応援[先制を持つクリーチャー・ST+10]</td></tr>
-                <tr><th scope="row">ケンタウロス</th><td>ビギンズ</td><td>風N</td><td>G80</td><td>30 / 40</td><td>-</td><td>-</td><td>先制 ; 使用したアイテムは復帰[ブック]の能力を得る</td></tr>
+                <tr><th scope="row">ケンタウロス</th><td>ビギンズ</td><td>風S</td><td>G80</td><td>30 / 40</td><td>-</td><td>-</td><td>先制 ; このクリーチャーに使用したアイテムはブックに復帰する</td></tr>
                 <tr><th scope="row">コーンフォーク</th><td>ビギンズ</td><td>風N</td><td>G60</td><td>30 / 40</td><td>-</td><td>-</td><td>このクリーチャーが戦闘、またはスペルで破壊された場合、使用者にG200の魔力を与える</td></tr>
-                <tr><th scope="row">サキュバス</th><td>ビギンズ</td><td>風N</td><td>G40+□</td><td>40 / 40</td><td>-</td><td>-</td><td>攻撃成功時、対戦相手の基本ST=0</td></tr>
+                <tr><th scope="row">サキュバス</th><td>ビギンズ</td><td>風N</td><td>G40+□</td><td>40 / 40</td><td>-</td><td>-</td><td>攻撃成功時、相手クリーチャーの基本ATを0にする</td></tr>
                 <tr><th scope="row">ジャイアントバット</th><td>ビギンズ</td><td>風N</td><td>G20</td><td>20 / 30</td><td>-</td><td>巻</td><td>-</td></tr>
                 <tr><th scope="row">スフィンクス</th><td>ビギンズ</td><td>風R</td><td>G60+風+□</td><td>40 / 50</td><td>地</td><td>-</td><td>攻撃成功時、対戦相手に混乱の{呪}効果を付ける : 応援[{地}・HP-10]</td></tr>
-                <tr><th scope="row">スプライト</th><td>ビギンズ</td><td>風N</td><td>G10</td><td>20 / 20</td><td>地</td><td>-</td><td>無効化[MHP40以上]</td></tr>
+                <tr><th scope="row">スプライト</th><td>ビギンズ</td><td>風N</td><td>G10</td><td>20 / 20</td><td>地</td><td>-</td><td>攻撃無効[最大HP40以上]</td></tr>
                 <tr><th scope="row">スペクター</th><td>ビギンズ</td><td>風N</td><td>G30</td><td>0 / 30</td><td>-</td><td>-</td><td>戦闘中、ATとHPが10～70のランダムな値になる</td></tr>
                 <tr><th scope="row">ダンピール</th><td>ビギンズ</td><td>風S</td><td>G60+風</td><td>40 / 40</td><td>-</td><td>-</td><td>即死[{地} ; 60%] ; 無効化[{地}]</td></tr>
                 <tr><th scope="row">ナイト</th><td>ビギンズ</td><td>風N</td><td>G80</td><td>50 / 40</td><td>-</td><td>-</td><td>強打[最大HP50以上]</td></tr>
-                <tr><th scope="row">ナイトメア</th><td>ビギンズ</td><td>風S</td><td>G40+風</td><td>30 / 30</td><td>-</td><td>-</td><td>貫通[全]</td></tr>
+                <tr><th scope="row">ナイキー</th><td>ビギンズ</td><td>風S</td><td>G40+風</td><td>30 / 30</td><td>-</td><td>防</td><td>先制 ; 攻撃成功時、相手クリーチャーにマヒの{呪}効果を付ける</td></tr>
+                <tr><th scope="row">ナイトメア</th><td>ビギンズ</td><td>風R</td><td>G40+風</td><td>30 / 30</td><td>-</td><td>-</td><td>貫通[全]</td></tr>
                 <tr><th scope="row">ハーピー</th><td>ビギンズ</td><td>風N</td><td>G50</td><td>30 / 30</td><td>-</td><td>-</td><td>先制</td></tr>
                 <tr><th scope="row">パウダーイーター</th><td>ビギンズ</td><td>風S</td><td>G10</td><td>1 / 1</td><td>-</td><td>巻</td><td>移動時に増殖し、元の領地と移動先の両方に配置される</td></tr>
                 <tr><th scope="row">ハリケーン</th><td>ビギンズ</td><td>風N</td><td>G40</td><td>20 / 50</td><td>-</td><td>防巻</td><td>防御型；先制</td></tr>
-                <tr><th scope="row">プッシュプル</th><td>ビギンズ</td><td>風S</td><td>G60</td><td>0 / 40</td><td>-</td><td>巻</td><td>攻撃を2回行う</td></tr>
+                <tr><th scope="row">プッシュプル</th><td>ビギンズ</td><td>風S</td><td>G40</td><td>0 / 40</td><td>-</td><td>巻</td><td>攻撃を2回行う</td></tr>
+                <tr><th scope="row">ペガサス</th><td>ビギンズ</td><td>風N</td><td>G40</td><td>30 / 20</td><td>-</td><td>巻</td><td>先制 ; 防魔 ; 魔術無効</td></tr>
                 <tr><th scope="row">ベールゼブブ</th><td>ビギンズ</td><td>風R</td><td>G140+風+風+□</td><td>70 / 70</td><td>地</td><td>-</td><td>応援[{風}・ST+10] : 戦闘終了時、使用者はG100の魔力を失う</td></tr>
-                <tr><th scope="row">ヨーウィ</th><td>ビギンズ</td><td>風N</td><td>G70</td><td>40 / 40</td><td>-</td><td>-</td><td>強打[{無}] ; 配置した領地の通行料は、ランダムに1/2～2.5倍になる</td></tr>
+                <tr><th scope="row">ホーネット</th><td>ビギンズ</td><td>風N</td><td>G45</td><td>40 / 30</td><td>-</td><td>巻</td><td>攻撃成功時、相手クリーチャーに毒の{呪}効果を付ける</td></tr>
+                <tr><th scope="row">マスターモンク</th><td>ビギンズ</td><td>風N</td><td>G80</td><td>20 / 50</td><td>-</td><td>-</td><td>先制 ; アイテムを使用しない場合、AT+30、HP-30</td></tr>
+                <tr><th scope="row">ヨーウィ</th><td>ビギンズ</td><td>風S</td><td>G80</td><td>40 / 40</td><td>-</td><td>-</td><td>強打[{無}] ; このクリーチャーを配置した領地の通行料は、ランダムに0.5～2.5倍になる</td></tr>
                 <tr><th scope="row">レベラー</th><td>ビギンズ</td><td>風S</td><td>G100+風</td><td>40 / 60</td><td>-</td><td>巻</td><td>戦闘が行われた領地が{風}以外の場合、戦闘終了時、領地のレベルを1下げる</td></tr>
                 <tr><th scope="row">ロードランナー</th><td>ビギンズ</td><td>風N</td><td>G45</td><td>20 / 30</td><td>-</td><td>巻</td><td>先制：クリーチャー移動で1～2マス移動できる</td></tr>
-                <tr><th scope="row">ワイバーン</th><td>ビギンズ</td><td>風N</td><td>G60+風</td><td>40 / 40</td><td>地</td><td>防</td><td>先制 ; 離れた{風}空地にも移動できる</td></tr>
+                <tr><th scope="row">ワイバーン</th><td>ビギンズ</td><td>風S</td><td>G60+風</td><td>40 / 40</td><td>地</td><td>防</td><td>先制 ; クリーチャー移動で離れた{風}の空き地へ移動できる</td></tr>
               </tbody>
             </table>
           </div>
@@ -270,7 +289,7 @@
 
         <section class="card-section" id="%E3%82%A2%E3%82%A4%E3%83%86%E3%83%A0">
           <h2>アイテム</h2>
-          <p class="section-count">48 件</p>
+          <p class="section-count">60 件</p>
           <div class="table-wrap">
             <table>
               <thead>
@@ -278,53 +297,65 @@
               </thead>
               <tbody>
                 <tr><th scope="row">アースシールド</th><td>ビギンズ</td><td>防S</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>無効化[{地}] : {地}クリーチャーが使用した場合、無効化[通常攻撃]</td></tr>
+                <tr><th scope="row">アーメット</th><td>ビギンズ</td><td>防N</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>AT-10 ; HP+40</td></tr>
                 <tr><th scope="row">アイシクル</th><td>ビギンズ</td><td>武N</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>AT+30；強打[{火}]</td></tr>
                 <tr><th scope="row">アングリーマスク</th><td>ビギンズ</td><td>道R</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>HP+30 ; 戦闘終了時、戦闘相手のHP-(使用クリーチャーが受けたダメージ)</td></tr>
                 <tr><th scope="row">ウィンドカッター</th><td>ビギンズ</td><td>巻N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>巻物攻撃[ST30] : 巻物強打[{地}]</td></tr>
-                <tr><th scope="row">ウィンドシールド</th><td>ビギンズ</td><td>防S</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>無効化[{風}] : {風}クリーチャーが使用した場合、無効化[通常攻撃]</td></tr>
-                <tr><th scope="row">ウォーターシールド</th><td>ビギンズ</td><td>防S</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>無効化[{水}] : {水}クリーチャーが使用した場合、無効化[通常攻撃]</td></tr>
+                <tr><th scope="row">ウィンドシールド</th><td>ビギンズ</td><td>防S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>攻撃無効[{風}] ; 攻撃無効 ({風}クリーチャーが使用した場合)</td></tr>
+                <tr><th scope="row">ウォーターシールド</th><td>ビギンズ</td><td>防S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>攻撃無効[{水}] ; 攻撃無効 ({水}クリーチャーが使用した場合)</td></tr>
                 <tr><th scope="row">エアスラッシャー</th><td>ビギンズ</td><td>武N</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>AT+30；強打[{風}]</td></tr>
-                <tr><th scope="row">エターナルメイル</th><td>ビギンズ</td><td>防R</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>HP+40 ; 復帰[ブック]</td></tr>
+                <tr><th scope="row">エターナルメイル</th><td>ビギンズ</td><td>防R</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>HP+40 ; 戦闘終了時、ブックに復帰する</td></tr>
                 <tr><th scope="row">オーラブレード</th><td>ビギンズ</td><td>武S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>ST+(MHPの値)</td></tr>
-                <tr><th scope="row">ガセアスフォーム</th><td>ビギンズ</td><td>道N</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>ST=0 : 無効化[通常攻撃]</td></tr>
-                <tr><th scope="row">カタパルト</th><td>ビギンズ</td><td>武N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>ST+30, HP+30</td></tr>
+                <tr><th scope="row">ガセアスフォーム</th><td>ビギンズ</td><td>道N</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>AT=0 ; 攻撃無効</td></tr>
+                <tr><th scope="row">カタパルト</th><td>ビギンズ</td><td>武R</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>AT+30 ; HP+30</td></tr>
                 <tr><th scope="row">クリス</th><td>ビギンズ</td><td>武S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>ST+30 : アイテム破壊と盗みの効果を受けない</td></tr>
                 <tr><th scope="row">クレイモア</th><td>ビギンズ</td><td>武R</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>AT+50</td></tr>
-                <tr><th scope="row">グレムリンアムル</th><td>ビギンズ</td><td>道S</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>戦闘開始時、対戦相手のアイテムを破壊する</td></tr>
+                <tr><th scope="row">グレムリンアムル</th><td>ビギンズ</td><td>道S</td><td>G90</td><td>- / -</td><td>-</td><td>-</td><td>戦闘開始時、対戦相手のアイテムを破壊する</td></tr>
                 <tr><th scope="row">コローシブローブ</th><td>ビギンズ</td><td>防</td><td>?</td><td>- / -</td><td>-</td><td>-</td><td>-</td></tr>
                 <tr><th scope="row">スケールアーマー</th><td>ビギンズ</td><td>防N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>HP+40</td></tr>
                 <tr><th scope="row">ストームコーザー</th><td>ビギンズ</td><td>武R</td><td>G55</td><td>- / -</td><td>-</td><td>-</td><td>ST+60, HP-30</td></tr>
                 <tr><th scope="row">ストーンヘイル</th><td>ビギンズ</td><td>巻N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>巻物攻撃[ST30] : 巻物強打[{風}]</td></tr>
+                <tr><th scope="row">スティングボトル</th><td>ビギンズ</td><td>道N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>戦闘開始時、相手セプターが使用した道具または援護クリーチャーを破壊する ; 戦闘終了時、ブックに復帰する</td></tr>
                 <tr><th scope="row">スパイクシールド</th><td>ビギンズ</td><td>防S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>攻撃反射(ダメージの50%)</td></tr>
+                <tr><th scope="row">スパークボール</th><td>ビギンズ</td><td>巻N</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>魔術:40ダメージ</td></tr>
                 <tr><th scope="row">スリング</th><td>ビギンズ</td><td>道N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>AT+10；HP+10；先制</td></tr>
+                <tr><th scope="row">スピア</th><td>ビギンズ</td><td>武N</td><td>G10</td><td>- / -</td><td>-</td><td>-</td><td>AT+20 ; HP+10</td></tr>
+                <tr><th scope="row">タワーシールド</th><td>ビギンズ</td><td>防N</td><td>G90</td><td>- / -</td><td>-</td><td>-</td><td>攻撃無効(ダメージの50%) ; 魔術無効(ダメージの50%)</td></tr>
                 <tr><th scope="row">ダイヤアーマー</th><td>ビギンズ</td><td>防S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>後手 ; ST-30, HP+60</td></tr>
                 <tr><th scope="row">チェインメイル</th><td>ビギンズ</td><td>防N</td><td>G10</td><td>- / -</td><td>-</td><td>-</td><td>HP+30</td></tr>
                 <tr><th scope="row">ティアリングハロー</th><td>ビギンズ</td><td>巻S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>魔術：30ダメージ；魔術強打(使用クリーチャーが{無}でない場合)；戦闘中、アイテム破壊とアイテム盗みの効果は発動しない</td></tr>
-                <tr><th scope="row">トライデント</th><td>ビギンズ</td><td>武N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>ST+40, HP+20</td></tr>
-                <tr><th scope="row">ドリルランス</th><td>ビギンズ</td><td>武S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>ST+20 ; 貫通[全]</td></tr>
+                <tr><th scope="row">トライデント</th><td>ビギンズ</td><td>武R</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>AT+40 ; HP+10</td></tr>
+                <tr><th scope="row">ドリルランス</th><td>ビギンズ</td><td>武S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>AT+20 ; 貫通</td></tr>
                 <tr><th scope="row">ネクロスカラベ</th><td>ビギンズ</td><td>道S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>使用クリーチャーが破壊された場合、&quot;スケルトン&quot;として復活する</td></tr>
                 <tr><th scope="row">バタリングラム</th><td>ビギンズ</td><td>武N</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>ST+30 ; 即死[防御型の能力を持つクリーチャー・100%]</td></tr>
                 <tr><th scope="row">バトルアックス</th><td>ビギンズ</td><td>武N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>AT+40</td></tr>
-                <tr><th scope="row">ファイアーシールド</th><td>ビギンズ</td><td>防S</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>無効化[{火}] : {火}クリーチャーが使用した場合、無効化[通常攻撃]</td></tr>
-                <tr><th scope="row">ファイアーボルト</th><td>ビギンズ</td><td>巻N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>巻物攻撃[ST30] : 巻物強打[{水}]</td></tr>
-                <tr><th scope="row">ファルコンソード</th><td>ビギンズ</td><td>武N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>先制 : ST+20</td></tr>
-                <tr><th scope="row">ブーメラン</th><td>ビギンズ</td><td>武S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>ST+20, HP+10 ; 復帰[手札]</td></tr>
-                <tr><th scope="row">フュージョン</th><td>ビギンズ</td><td>巻R</td><td>G120</td><td>- / -</td><td>-</td><td>-</td><td>巻物攻撃[ST50]</td></tr>
-                <tr><th scope="row">フリーズ</th><td>ビギンズ</td><td>巻N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>巻物攻撃[ST30] : 巻物強打[{火}]</td></tr>
+                <tr><th scope="row">ファイアーシールド</th><td>ビギンズ</td><td>防S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>攻撃無効[{火}] ; 攻撃無効 ({火}クリーチャーが使用した場合)</td></tr>
+                <tr><th scope="row">ファイアーボルト</th><td>ビギンズ</td><td>巻N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>魔術:30ダメージ ; 強打[{水}]</td></tr>
+                <tr><th scope="row">ファルコンソード</th><td>ビギンズ</td><td>武N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>AT+20 ; 先制</td></tr>
+                <tr><th scope="row">フェニックスアムル</th><td>ビギンズ</td><td>道N</td><td>G0</td><td>- / -</td><td>-</td><td>-</td><td>使用クリーチャーが戦闘で破壊された場合、それを手札に復帰させ、コストと同額の魔力を得る</td></tr>
+                <tr><th scope="row">ブーメラン</th><td>ビギンズ</td><td>武R</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>AT+20 ; HP+10 ; 戦闘終了時、手札に復帰する</td></tr>
+                <tr><th scope="row">フュージョン</th><td>ビギンズ</td><td>巻R</td><td>G120</td><td>- / -</td><td>-</td><td>-</td><td>魔術:50ダメージ</td></tr>
+                <tr><th scope="row">フリーズ</th><td>ビギンズ</td><td>巻N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>魔術:30ダメージ ; 強打[{火}]</td></tr>
                 <tr><th scope="row">プリズムワンド</th><td>ビギンズ</td><td>武S</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>戦闘相手と属性が違う場合、ST+40, HP+40</td></tr>
                 <tr><th scope="row">フレイムタン</th><td>ビギンズ</td><td>武N</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>AT+30；強打[{水}]</td></tr>
                 <tr><th scope="row">プレートメイル</th><td>ビギンズ</td><td>防R</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>HP+50</td></tr>
                 <tr><th scope="row">プロテウスリング</th><td>ビギンズ</td><td>道R</td><td>G0</td><td>- / -</td><td>-</td><td>-</td><td>使用クリーチャーはランダムな別のクリーチャーに変身する : アイテム破壊と盗みの効果を受けない</td></tr>
                 <tr><th scope="row">ベストメント</th><td>ビギンズ</td><td>防S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>HP+30 : アイテム破壊と盗みの効果を受けない</td></tr>
-                <tr><th scope="row">ペトリフストーン</th><td>ビギンズ</td><td>道N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>ST=0 ; HP=80</td></tr>
-                <tr><th scope="row">マジックシールド</th><td>ビギンズ</td><td>防N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>HP+30 ; 無効化[巻物攻撃]</td></tr>
-                <tr><th scope="row">メイス</th><td>ビギンズ</td><td>武N</td><td>G0</td><td>- / -</td><td>-</td><td>-</td><td>ST+20</td></tr>
+                <tr><th scope="row">ペトリフストーン</th><td>ビギンズ</td><td>道S</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>AT=0 ; HP=80</td></tr>
+                <tr><th scope="row">バックラー</th><td>ビギンズ</td><td>防N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>攻撃無効[基本AT30以下]</td></tr>
+                <tr><th scope="row">バインドウィップ</th><td>ビギンズ</td><td>武N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>AT+30 ; 攻撃成功時、相手クリーチャーに{呪}マヒの効果を付ける</td></tr>
+                <tr><th scope="row">ボーパルソード</th><td>ビギンズ</td><td>武R</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>AT+30 ; 強打[最大HP40以上]</td></tr>
+                <tr><th scope="row">マジックシールド</th><td>ビギンズ</td><td>防N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>HP+30 ; 魔術無効</td></tr>
+                <tr><th scope="row">マサムネ</th><td>ビギンズ</td><td>武S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>AT+50 ; HP-10</td></tr>
+                <tr><th scope="row">メイス</th><td>ビギンズ</td><td>武N</td><td>G0</td><td>- / -</td><td>-</td><td>-</td><td>AT+20</td></tr>
                 <tr><th scope="row">モーニングスター</th><td>ビギンズ</td><td>武N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>AT+30；HP+10</td></tr>
                 <tr><th scope="row">ラットハンター</th><td>ビギンズ</td><td>道R</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>攻撃成功時、対戦相手を&quot;G・ラット&quot;に変える</td></tr>
                 <tr><th scope="row">レザーアーマー</th><td>ビギンズ</td><td>防N</td><td>G0</td><td>- / -</td><td>-</td><td>-</td><td>HP+20</td></tr>
                 <tr><th scope="row">ロックバイター</th><td>ビギンズ</td><td>武N</td><td>G25</td><td>- / -</td><td>-</td><td>-</td><td>ST+30 : 強打[{地}]</td></tr>
                 <tr><th scope="row">ロングソード</th><td>ビギンズ</td><td>武N</td><td>G10</td><td>- / -</td><td>-</td><td>-</td><td>AT+30</td></tr>
                 <tr><th scope="row">ロングボウ</th><td>ビギンズ</td><td>武S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>ST+20 : HP+30</td></tr>
+                <tr><th scope="row">サキュバスリング</th><td>ビギンズ</td><td>道N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>先制；攻撃成功時、相手クリーチャーの基本ATを0にする</td></tr>
+                <tr><th scope="row">シルバープロウ</th><td>ビギンズ</td><td>道R</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>HP+10 ; 戦闘終了時、戦闘が行われた領地のレベルを1上げる</td></tr>
               </tbody>
             </table>
           </div>
@@ -332,62 +363,78 @@
 
         <section class="card-section" id="%E3%82%B9%E3%83%9A%E3%83%AB">
           <h2>スペル</h2>
-          <p class="section-count">56 件</p>
+          <p class="section-count">81 件</p>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr><th>カード名</th><th>作品</th><th>種類</th><th>コスト</th><th>AT / HP</th><th>配置制限</th><th>使用制限</th><th>能力・効果</th></tr>
               </thead>
               <tbody>
-                <tr><th scope="row">アースシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{地}に変える</td></tr>
+                <tr><th scope="row">アースシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{地}に変える</td></tr>
                 <tr><th scope="row">アイスストーム</th><td>ビギンズ</td><td>複瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>全ての{火}クリーチャーに20ダメージ</td></tr>
                 <tr><th scope="row">アンチエレメント</th><td>ビギンズ</td><td>単呪S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーは地形効果を得られない : カードを1枚引く</td></tr>
                 <tr><th scope="row">イビルブラスト</th><td>ビギンズ</td><td>単瞬R</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>対象敵クリーチャーに30ダメージ</td></tr>
                 <tr><th scope="row">イレイジャー</th><td>ビギンズ</td><td>複瞬E</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>クリーチャーとセプターに付いた全ての{呪}効果を消す</td></tr>
                 <tr><th scope="row">インフルエンス</th><td>ビギンズ</td><td>単瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>対象領地をその所有者が最も多く持つ領地の属性に変える</td></tr>
                 <tr><th scope="row">ウォーターシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{水}に変える</td></tr>
-                <tr><th scope="row">エアーシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{風}に変える</td></tr>
+                <tr><th scope="row">エアーシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{風}に変える</td></tr>
                 <tr><th scope="row">エクスプロード</th><td>ビギンズ</td><td>複瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>全ての{水}クリーチャーに20ダメージ</td></tr>
-                <tr><th scope="row">エスケープ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者は最も近い空き地に飛ぶ(使用者はこのターンのダイスを使えない)</td></tr>
+                <tr><th scope="row">エスケープ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者は最も近い空き地に飛ぶ (使用者はこのターンのダイスを使えない)</td></tr>
+                <tr><th scope="row">エクスチェンジ</th><td>ビギンズ</td><td>単瞬S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象自クリーチャーを手札のクリーチャーと交換する</td></tr>
                 <tr><th scope="row">オーロラ</th><td>ビギンズ</td><td>複瞬S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>全ての護符の価値を20%上げる</td></tr>
                 <tr><th scope="row">ギフト</th><td>ビギンズ</td><td>単瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>自分の現在の順位×G50の魔力を得る；自分の現在の順位と同じ枚数のカードを引く</td></tr>
-                <tr><th scope="row">クインテッセンス</th><td>ビギンズ</td><td>単瞬R</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>レベル4以下の対象領地を{複}に変える</td></tr>
+                <tr><th scope="row">クインテッセンス</th><td>ビギンズ</td><td>単瞬S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>レベル4以下の対象領地を{複}に変える</td></tr>
+                <tr><th scope="row">グリード</th><td>ビギンズ</td><td>単呪N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}通行料増加の効果を付ける (通行料が1.5倍になる) ; カードを1枚引く</td></tr>
                 <tr><th scope="row">グレース</th><td>ビギンズ</td><td>単瞬N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>使用者は対象セプターの持つ護符総額の15%の魔力を得る</td></tr>
                 <tr><th scope="row">グロースボディ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーのMHP+10 (最大100)</td></tr>
                 <tr><th scope="row">サブサイド</th><td>ビギンズ</td><td>単瞬R</td><td>G100+□</td><td>- / -</td><td>-</td><td>-</td><td>対象敵セプターの最もレベルの高い領地のうち1つのレベルを1下げる ; 合成[&quot;サブサイド&quot;・対象は&quot;全てのセプターそれぞれ&quot;となる]</td></tr>
                 <tr><th scope="row">サンダーストーム</th><td>ビギンズ</td><td>複瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>全ての{地}クリーチャーのHP-20</td></tr>
                 <tr><th scope="row">シャッター</th><td>ビギンズ</td><td>単瞬N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象敵セプターの手札からアイテムかスペルカードを1枚選び、破壊する</td></tr>
                 <tr><th scope="row">シュリンク</th><td>ビギンズ</td><td>単瞬N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象敵クリーチャーのMHP-10</td></tr>
+                <tr><th scope="row">スピリットウォーク</th><td>ビギンズ</td><td>単呪S</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}空中歩行の効果を付ける (クリーチャー移動で離れた空き地に移動できる)</td></tr>
+                <tr><th scope="row">スロウ</th><td>ビギンズ</td><td>単呪N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに、{呪}ダイス制限1～3の効果を付ける (次から2回のダイスが1～3になる)</td></tr>
                 <tr><th scope="row">スクイーズ</th><td>ビギンズ</td><td>単瞬S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターの手札からカードを1枚選び、破壊する；カードを破壊されたセプターはG150の魔力を得る</td></tr>
                 <tr><th scope="row">デスクラウド</th><td>ビギンズ</td><td>複瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>全ての{風}クリーチャーのHP-20</td></tr>
+                <tr><th scope="row">ディジーズ</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}衰弱の効果を付ける (戦闘中、AT&amp;HPが-20される) ; カードを1枚引く</td></tr>
                 <tr><th scope="row">テンペスト</th><td>ビギンズ</td><td>複瞬R</td><td>G200</td><td>- / -</td><td>-</td><td>-</td><td>AT40以下の全てのクリーチャーに20ダメージ</td></tr>
                 <tr><th scope="row">トライアンフ</th><td>ビギンズ</td><td>単呪N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>城を通過するまで、使用者の次の周回ボーナスは1.5倍になる</td></tr>
                 <tr><th scope="row">ドレインマジック</th><td>ビギンズ</td><td>単瞬S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>使用者は対象敵セプターから、所持魔力の30%を奪う</td></tr>
                 <tr><th scope="row">パーミッション</th><td>ビギンズ</td><td>単瞬N</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>使用者は全ての砦を通過したことになる</td></tr>
                 <tr><th scope="row">バインドミスト</th><td>ビギンズ</td><td>単呪S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに{呪}&quot;戦闘行動不可&quot;をつける (攻撃やアイテム使用ができず、能力が発動しない)</td></tr>
                 <tr><th scope="row">ピース</th><td>ビギンズ</td><td>単呪S</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}停戦の効果を付ける(対象のいる領地は侵略を受けなくなり、通行料がG0になる)</td></tr>
-                <tr><th scope="row">ファイアーシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{火}に変える</td></tr>
+                <tr><th scope="row">ドラウト</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}土地レベル固定の効果を付ける (対象のいる領地がレベル変更できない) ; カードを1枚引く</td></tr>
+                <tr><th scope="row">バイタリティ</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}増強の効果を付ける (戦闘中、AT&amp;HPが+20される) ; カードを1枚引く</td></tr>
+                <tr><th scope="row">バニシングレイ</th><td>ビギンズ</td><td>単瞬S</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>対象の{無}クリーチャーを破壊する</td></tr>
+                <tr><th scope="row">バニッシャー</th><td>ビギンズ</td><td>複瞬R</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>全ての{呪}効果が付いたクリーチャーに20ダメージ</td></tr>
+                <tr><th scope="row">バリアー</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに、5ラウンドの間、{呪}防魔の効果を付ける (対象を選ぶスペルや領地能力で選択されない)</td></tr>
+                <tr><th scope="row">ファイアーシフト</th><td>ビギンズ</td><td>単瞬N</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象自領地を{火}に変える</td></tr>
                 <tr><th scope="row">ファンタズム</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}HP固定の効果を付ける(HP、最大HPがスペルの効果を受けなくなる)</td></tr>
-                <tr><th scope="row">フォーサイト</th><td>ビギンズ</td><td>単瞬S</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>使用者のブックの上から6枚を見て、1枚選び、手札に加える</td></tr>
+                <tr><th scope="row">フォーサイト</th><td>ビギンズ</td><td>単瞬N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>使用者のブックの上から6枚を見て、1枚選び、手札に加える</td></tr>
                 <tr><th scope="row">フォッグ</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}通行料減少の効果を付ける(対象のいる領地の通行料が0.5倍になる)：カードを1枚引く</td></tr>
                 <tr><th scope="row">フォレストリープ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者は最も近い{地}土地に飛ぶ (使用者はこのターンのダイスを使えない)</td></tr>
-                <tr><th scope="row">フライ</th><td>ビギンズ</td><td>単瞬N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>使用者はこのターンダイスを2つ使い、その合計分進める</td></tr>
+                <tr><th scope="row">フェアリーライト</th><td>ビギンズ</td><td>単呪N</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>使用者に、{呪}魔力補給の効果を付ける (城を通過するまで毎ラウンド、手札の数xG10の魔力を得る)</td></tr>
+                <tr><th scope="row">ブラックアウト</th><td>ビギンズ</td><td>単呪S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>対象敵セプターに、{呪}通行料封印の効果を付ける (2ラウンドの間、通行料を得られない)</td></tr>
+                <tr><th scope="row">ブラックスミス</th><td>ビギンズ</td><td>単瞬N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターの手札からカードを1枚選び、ランダムな武器・防具に変える</td></tr>
+                <tr><th scope="row">フライ</th><td>ビギンズ</td><td>単瞬S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>使用者はこのターンダイスを2つ使い、その合計分進める</td></tr>
                 <tr><th scope="row">プレーンリープ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者は最も近い{風}土地に飛ぶ(使用者はこのターンのダイスを使えない)</td></tr>
+                <tr><th scope="row">プロフェシー</th><td>ビギンズ</td><td>単瞬R</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>使用者のブックから、選んだタイプのカードを1枚引く</td></tr>
                 <tr><th scope="row">ヘイスト</th><td>ビギンズ</td><td>単呪S</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに{呪}&quot;ダイス6～8&quot;をつける (次から2回のダイスを6～8にする)</td></tr>
-                <tr><th scope="row">ホープ</th><td>ビギンズ</td><td>単瞬N</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>使用者はブックからカードを2枚引く</td></tr>
+                <tr><th scope="row">ホープ</th><td>ビギンズ</td><td>単瞬S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>使用者はブックからカードを2枚引く</td></tr>
                 <tr><th scope="row">ホーリーワード１</th><td>ビギンズ</td><td>単呪N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに、{呪}ダイス制限1の効果を付ける(次のダイスが必ず1になる)</td></tr>
                 <tr><th scope="row">ホーリーワード３</th><td>ビギンズ</td><td>単呪N</td><td>G10</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに、{呪}ダイス制限3の効果を付ける(次のダイスが必ず3になる)</td></tr>
                 <tr><th scope="row">ホーリーワード６</th><td>ビギンズ</td><td>単呪N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに、{呪}ダイス制限6の効果を付ける(次のダイスが必ず6になる)</td></tr>
                 <tr><th scope="row">ホーリーワード８</th><td>ビギンズ</td><td>単呪S</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに{呪}&quot;ダイス8&quot;をつける (次のダイスを8にする)</td></tr>
                 <tr><th scope="row">マウンテンリープ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者は最も近い{火}土地に飛ぶ (使用者はこのターンのダイスを使えない)</td></tr>
                 <tr><th scope="row">マジックボルト</th><td>ビギンズ</td><td>単瞬N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象敵クリーチャーに20ダメージ</td></tr>
-                <tr><th scope="row">マスグロース</th><td>ビギンズ</td><td>複瞬S</td><td>G30+□</td><td>- / -</td><td>-</td><td>-</td><td>全てのクリーチャーのMHP+5 (最大100) ; 合成[アイテム・対象は&quot;全ての自クリーチャーのMHP+5 (最大100)&quot;となる]</td></tr>
+                <tr><th scope="row">マスグロース</th><td>ビギンズ</td><td>複瞬R</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>全てのクリーチャーのHP&amp;最大HPが5増加する</td></tr>
+                <tr><th scope="row">マスファンタズム</th><td>ビギンズ</td><td>複呪R</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>全てのクリーチャーに、{呪}HP固定の効果を付ける (HP、最大HPがスペルの効果を受けなくなる)</td></tr>
                 <tr><th scope="row">マナ</th><td>ビギンズ</td><td>単瞬N</td><td>G0</td><td>- / -</td><td>-</td><td>-</td><td>使用者は(周回数+1)×G100の魔力を得る</td></tr>
+                <tr><th scope="row">ミューテーション</th><td>ビギンズ</td><td>単瞬S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーの最大HPを20増加させ、{呪}毒の効果を付ける</td></tr>
                 <tr><th scope="row">メテオ</th><td>ビギンズ</td><td>単瞬R</td><td>G200+□</td><td>- / -</td><td>-</td><td>-</td><td>対象の領地のレベルを2下げる : 対象の領地が連鎖していない場合、レベルを1にする</td></tr>
                 <tr><th scope="row">ライフストリーム</th><td>ビギンズ</td><td>複瞬N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>全ての自クリーチャーのHPを全回復する</td></tr>
                 <tr><th scope="row">ランドプロテクション</th><td>ビギンズ</td><td>単呪N</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>対象の領地に防魔の{呪}効果を付ける</td></tr>
                 <tr><th scope="row">リコール</th><td>ビギンズ</td><td>単瞬S</td><td>G90</td><td>- / -</td><td>-</td><td>-</td><td>使用者は城に飛ぶ (使用者はこのターンのダイスを使えない)</td></tr>
-                <tr><th scope="row">リバイバル</th><td>ビギンズ</td><td>単瞬R</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターのブックを対戦開始時の状態に戻す</td></tr>
+                <tr><th scope="row">リバイバル</th><td>ビギンズ</td><td>単瞬N</td><td>G70</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターのブックをゲーム開始時の状態に戻す</td></tr>
                 <tr><th scope="row">リベレーション</th><td>ビギンズ</td><td>単呪S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>使用者に、{呪}全領地開発の効果を付ける(2ラウンドの間、全ての領地に対して領地開発を使用できる)</td></tr>
                 <tr><th scope="row">リムーブカース</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに付いた{呪}効果を消す：使用後、ブックに復帰する</td></tr>
                 <tr><th scope="row">リリーフ</th><td>ビギンズ</td><td>単瞬N</td><td>G30</td><td>- / -</td><td>-</td><td>-</td><td>2体の対象自クリーチャーを交換する ; 復帰[ブック]</td></tr>
@@ -395,6 +442,15 @@
                 <tr><th scope="row">レイオブロウ</th><td>ビギンズ</td><td>複瞬S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>全てのセプターの手札の使用魔力G100以上のカードを破壊する</td></tr>
                 <tr><th scope="row">レイクリープ</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者は最も近い{水}土地に飛ぶ (使用者はこのターンのダイスを使えない)</td></tr>
                 <tr><th scope="row">ローカスト</th><td>ビギンズ</td><td>単瞬S</td><td>G100</td><td>- / -</td><td>-</td><td>-</td><td>対象の領地のレベルを1下げる</td></tr>
+                <tr><th scope="row">アンチマジック</th><td>ビギンズ</td><td>単呪N</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象セプターに、{呪}抗魔の効果を付ける (対象を選ぶスペル・領地能力の効果を1度だけ受けない)</td></tr>
+                <tr><th scope="row">ウィークネス</th><td>ビギンズ</td><td>単瞬N</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーの基本ATを0にする ; カードを1枚引く</td></tr>
+                <tr><th scope="row">カモフラージュ</th><td>ビギンズ</td><td>単呪S</td><td>G40</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーに、{呪}保護色の効果を付ける (自身や土地の属性に関係なく地形効果を得る) ; 使用後、ブックに復帰する</td></tr>
+                <tr><th scope="row">ゴブリンズレア</th><td>ビギンズ</td><td>単瞬R</td><td>G10+□</td><td>- / -</td><td>-</td><td>-</td><td>使用者が空き地に止まっている場合、そこに&quot;ゴブリン&quot;を配置する ; 使用後、手札に復帰する</td></tr>
+                <tr><th scope="row">サイレンス</th><td>ビギンズ</td><td>単呪S</td><td>G60</td><td>- / -</td><td>-</td><td>-</td><td>対象敵セプターに、{呪}クリーチャー封印の効果を付ける (2ラウンドの間クリーチャーカードを使用できない)</td></tr>
+                <tr><th scope="row">ターンウォール</th><td>ビギンズ</td><td>単瞬R</td><td>G80</td><td>- / -</td><td>-</td><td>-</td><td>対象クリーチャーをある特定の、同じ属性の防御型クリーチャーに変身させる</td></tr>
+                <tr><th scope="row">チャリオット</th><td>ビギンズ</td><td>単瞬S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>対象の自クリーチャーを2マス移動させる ; 使用後、ブックに復帰する</td></tr>
+                <tr><th scope="row">ファインド</th><td>ビギンズ</td><td>単瞬S</td><td>G20</td><td>- / -</td><td>-</td><td>-</td><td>使用者はブックからカードを1枚引く ; 使用後、手札に復帰する</td></tr>
+                <tr><th scope="row">ランドドレイン</th><td>ビギンズ</td><td>単瞬S</td><td>G50</td><td>- / -</td><td>-</td><td>-</td><td>使用者は、対象敵セプターから、そのセプターの所有する領地数xG30の魔力を奪う</td></tr>
               </tbody>
             </table>
           </div>
