@@ -100,9 +100,13 @@ function writeTsv(data) {
 }
 
 function cleanValue(value, fallback = "-") {
-  const text = String(value ?? "").trim();
+  const text = String(value ?? "").replace(/\r?\n/g, " ").trim();
   if (!text) return fallback;
-  return text.replace(/ST/g, "AT").replace(/カード/g, "□");
+  return text.replace(/ST/g, "AT");
+}
+
+function cleanCost(value, fallback = "-") {
+  return cleanValue(value, fallback).replace(/カード/g, "□");
 }
 
 function normalizeCategory(value) {
@@ -140,7 +144,7 @@ function rowFromUpdate(update, existingRow) {
     "カード名": cleanValue(update.name, existingRow?.["カード名"] || ""),
     "作品": cleanValue(update.game, existingRow?.["作品"] || "ビギンズ"),
     "種類": kindForUpdate(update, existingRow),
-    "コスト": cleanValue(update.cost, existingRow?.["コスト"] || "?"),
+    "コスト": cleanCost(update.cost, existingRow?.["コスト"] || "?"),
     "AT": cleanValue(update.at ?? update.AT, existingRow?.["AT"] || (category === "creature" ? "-" : "-")),
     "HP": cleanValue(update.hp ?? update.HP, existingRow?.["HP"] || "-"),
     "配置": cleanValue(update.placement, existingRow?.["配置"] || "-"),
