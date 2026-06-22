@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cepter Deploy"
+  short_description: "Commit, push, and deploy Cepter Prompt Atelier updates."
+  default_prompt: "Cepter Prompt Atelierの変更をGitHubへ反映し、Cloudflareへデプロイしてください。"

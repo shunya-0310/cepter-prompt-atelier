@@ -27,6 +27,17 @@ function markdownResponse(body, status = 200) {
   });
 }
 
+function jsonResponse(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "x-robots-tag": "noindex",
+    },
+  });
+}
+
 function supabaseConfig(env) {
   const url = String(env.SUPABASE_URL || DEFAULT_SUPABASE_URL).replace(/\/$/, "");
   const anonKey = env.SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
@@ -50,6 +61,28 @@ function validToken(token) {
   return /^[A-Za-z0-9_-]{16,128}$/.test(token || "");
 }
 
+function safeText(value, maxLength = 20000) {
+  return String(value || "").trim().slice(0, maxLength);
+}
+
+function requireAutomationConfig(env) {
+  const missing = [];
+  if (!env.CEPTER_ADMIN_KEY) missing.push("CEPTER_ADMIN_KEY");
+  if (!env.GITHUB_TOKEN) missing.push("GITHUB_TOKEN");
+  if (!env.GITHUB_REPO) missing.push("GITHUB_REPO");
+  if (missing.length) {
+    throw new Error(`Worker variables are missing: ${missing.join(", ")}`);
+  }
+}
+
+function requireAdmin(request, env, body) {
+  const supplied = request.headers.get("x-cepter-admin-key") || body?.adminKey || "";
+  if (!env.CEPTER_ADMIN_KEY || supplied !== env.CEPTER_ADMIN_KEY) {
+    return false;
+  }
+  return true;
+}
+
 async function fetchJson(url, options) {
   const response = await fetch(url, options);
   if (!response.ok) {
@@ -57,6 +90,27 @@ async function fetchJson(url, options) {
     throw new Error(`Supabase request failed: ${response.status} ${detail}`);
   }
   return response.json();
+}
+
+async function createGithubIssue(env, { title, body }) {
+  const repo = String(env.GITHUB_REPO || "").trim();
+  const response = await fetch(`https://api.github.com/repos/${repo}/issues`, {
+    method: "POST",
+    headers: {
+      accept: "application/vnd.github+json",
+      authorization: `Bearer ${env.GITHUB_TOKEN}`,
+      "content-type": "application/json",
+      "user-agent": "cepter-prompt-atelier-worker",
+      "x-github-api-version": "2022-11-28",
+    },
+    body: JSON.stringify({ title, body }),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(`GitHub issue creation failed: ${response.status} ${data.message || ""}`.trim());
+  }
+  return data;
 }
 
 async function readShareContext(env, rawToken) {
@@ -147,6 +201,74 @@ async function handlePublicKnowledge(env) {
   return markdownResponse(publicKnowledge);
 }
 
+function issueBodyForCardUpdate(payload) {
+  const compactPayload = {
+    type: "card-update",
+    title: safeText(payload.title, 200),
+    versionLabel: safeText(payload.versionLabel, 80),
+    note: safeText(payload.note, 5000),
+    updates: Array.isArray(payload.updates) ? payload.updates : [],
+  };
+
+  return `# Card Update Request
+
+このIssueはCepter Prompt Atelierの管理ページから作成されました。
+Codexでは \`cepter-card-update\` Skillを使って処理してください。
+
+\`\`\`json
+${JSON.stringify(compactPayload, null, 2)}
+\`\`\`
+`;
+}
+
+function issueBodyForDeployRequest(payload) {
+  const compactPayload = {
+    type: "deploy-request",
+    title: safeText(payload.title, 200),
+    reason: safeText(payload.reason, 5000),
+    files: safeText(payload.files, 5000),
+  };
+
+  return `# Deploy Request
+
+このIssueはCepter Prompt Atelierの管理ページから作成されました。
+Codexでは \`cepter-deploy\` Skillを使って処理してください。
+
+\`\`\`json
+${JSON.stringify(compactPayload, null, 2)}
+\`\`\`
+`;
+}
+
+async function handleAutomationRequest(request, env, kind) {
+  let payload = {};
+  try {
+    payload = await request.json();
+  } catch {
+    return jsonResponse({ error: "JSON body is required." }, 400);
+  }
+
+  if (!requireAdmin(request, env, payload)) {
+    return jsonResponse({ error: "管理キーが正しくありません。" }, 401);
+  }
+
+  try {
+    requireAutomationConfig(env);
+    const now = new Date().toISOString().slice(0, 10);
+    const titlePrefix = kind === "card" ? "[card-update]" : "[deploy]";
+    const title = `${titlePrefix} ${safeText(payload.title, 120) || now}`;
+    const body = kind === "card" ? issueBodyForCardUpdate(payload) : issueBodyForDeployRequest(payload);
+    const issue = await createGithubIssue(env, { title, body });
+    return jsonResponse({
+      ok: true,
+      issueNumber: issue.number,
+      issueUrl: issue.html_url,
+    });
+  } catch (error) {
+    return jsonResponse({ error: error.message }, 500);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -157,6 +279,14 @@ export default {
 
     if (request.method === "GET" && url.pathname === "/ai/knowledge/public.md") {
       return handlePublicKnowledge(env);
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/automation/card-update-request") {
+      return handleAutomationRequest(request, env, "card");
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/automation/deploy-request") {
+      return handleAutomationRequest(request, env, "deploy");
     }
 
     return env.ASSETS.fetch(request);

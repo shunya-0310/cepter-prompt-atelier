@@ -65,6 +65,28 @@ Cloudflare Dashboardでは、Workerの `Settings > Domains & Routes` から `cep
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 
+## 管理ページと自動化依頼
+
+スマホからCodex向けの更新依頼を作るため、以下の管理ページを用意しています。
+
+```text
+https://cepter-atelier.com/admin-requests.html
+```
+
+このページは、カード更新依頼やデプロイ依頼をGitHub Issueとして登録します。
+フロントエンドにはGitHub tokenを置かず、Worker側の環境変数で保護します。
+
+Cloudflare WorkersのVariables/Secretsに以下を設定してください。
+
+- `CEPTER_ADMIN_KEY`: 管理ページから送る合言葉。長いランダム文字列にする。
+- `GITHUB_TOKEN`: GitHub Issueを作成できるfine-grained token。
+- `GITHUB_REPO`: Issueを作成するリポジトリ。例: `owner/repository`
+
+Codex側では以下のSkillを使います。
+
+- `cepter-card-update`: カード更新依頼をTSVへ反映し、Markdown/HTMLを再生成する。
+- `cepter-deploy`: GitHubへの反映とCloudflareデプロイを行う。
+
 ## デプロイ後の確認
 
 1. GitHubに `wrangler.jsonc`、`worker.js`、`public/` が入っていることを確認する。

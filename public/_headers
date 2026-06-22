@@ -10,6 +10,9 @@
 /knowledge.html
   X-Robots-Tag: noindex
 
+/admin-requests.html
+  X-Robots-Tag: noindex, nofollow
+
 /*.md
   Content-Type: text/plain; charset=utf-8
 

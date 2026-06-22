@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cepter Card Update"
+  short_description: "Update Cepter Prompt Atelier card TSVs and generated assets."
+  default_prompt: "カード更新依頼を処理して、TSVと生成物を更新してください。"
