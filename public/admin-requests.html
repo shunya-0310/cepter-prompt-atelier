@@ -435,6 +435,7 @@
               <div class="field tiny">
                 <label>属性</label>
                 <select data-field="element">
+                  <option value="-">-</option>
                   <option value="無">無</option>
                   <option value="火">火</option>
                   <option value="水">水</option>
@@ -491,6 +492,7 @@
         const row = wrapper.firstElementChild;
         cardUpdates.append(row);
         syncCardRowMode(row);
+        syncCategoryFields(row);
       }
 
       function collectCardUpdates() {
@@ -533,7 +535,7 @@
         const card = selectedCard(section);
         if (!card) return;
         setField(section, "category", card.category);
-        setField(section, "element", card.element || "無");
+        setField(section, "element", card.category === "creature" ? card.element || "無" : "-");
         setField(section, "kind", card.kind);
         setField(section, "rarity", card.rarity);
         setField(section, "cost", card.cost);
@@ -543,6 +545,7 @@
         setField(section, "usage", card.usage);
         setField(section, "effect", card.effect);
         setField(section, "name", "");
+        syncCategoryFields(section);
       }
 
       function syncCardRowMode(section) {
@@ -551,6 +554,21 @@
         if (!existingField) return;
         existingField.hidden = operation === "create";
         if (operation === "create") existingField.value = "";
+      }
+
+      function syncCategoryFields(section) {
+        const category = section.querySelector('[data-field="category"]')?.value || "creature";
+        const elementField = section.querySelector('[data-field="element"]');
+        if (!elementField) return;
+
+        if (category === "creature") {
+          elementField.disabled = false;
+          if (!elementField.value || elementField.value === "-") elementField.value = "無";
+          return;
+        }
+
+        elementField.value = "-";
+        elementField.disabled = true;
       }
 
       async function postJson(url, payload) {
@@ -578,6 +596,7 @@
         const section = event.target.closest("[data-card-update]");
         if (!section) return;
         if (event.target.dataset.field === "operation") syncCardRowMode(section);
+        if (event.target.dataset.field === "category") syncCategoryFields(section);
         if (event.target.dataset.field === "existingName") fillFromSelectedCard(section);
       });
 
