@@ -12,6 +12,9 @@
       "/api/automation/*"
     ]
   },
+  "vars": {
+    "GITHUB_REPO": "shunya-0310/cepter-prompt-atelier"
+  },
   "observability": {
     "enabled": true
   }
