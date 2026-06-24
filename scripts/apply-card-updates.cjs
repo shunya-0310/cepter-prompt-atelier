@@ -92,11 +92,21 @@ function readTsv(file) {
 }
 
 function writeTsv(data) {
+  sortRowsByCardName(data.rows);
   const lines = [
     data.headers.join("\t"),
     ...data.rows.map((row) => data.headers.map((header) => row[header] || "").join("\t")),
   ];
   fs.writeFileSync(data.fullPath, `${lines.join("\n")}\n`, "utf8");
+}
+
+function sortRowsByCardName(rows) {
+  rows.sort((a, b) =>
+    String(a["カード名"] || "").localeCompare(String(b["カード名"] || ""), "ja", {
+      numeric: true,
+      sensitivity: "base",
+    }),
+  );
 }
 
 function cleanValue(value, fallback = "-") {
