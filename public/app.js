@@ -6,7 +6,7 @@
     category: "クリーチャー",
     element: "無",
     dataKey: "neutral",
-    url: "./assets/carddata/begins-creatures-neutral.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-creatures-neutral.tsv?v=20260629-card-update-5",
   },
   {
     tab: "fire",
@@ -15,7 +15,7 @@
     category: "クリーチャー",
     element: "火",
     dataKey: "fire",
-    url: "./assets/carddata/begins-creatures-fire.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-creatures-fire.tsv?v=20260629-card-update-5",
   },
   {
     tab: "water",
@@ -24,7 +24,7 @@
     category: "クリーチャー",
     element: "水",
     dataKey: "water",
-    url: "./assets/carddata/begins-creatures-water.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-creatures-water.tsv?v=20260629-card-update-5",
   },
   {
     tab: "earth",
@@ -33,7 +33,7 @@
     category: "クリーチャー",
     element: "地",
     dataKey: "earth",
-    url: "./assets/carddata/begins-creatures-earth.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-creatures-earth.tsv?v=20260629-card-update-5",
   },
   {
     tab: "wind",
@@ -42,7 +42,7 @@
     category: "クリーチャー",
     element: "風",
     dataKey: "wind",
-    url: "./assets/carddata/begins-creatures-wind.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-creatures-wind.tsv?v=20260629-card-update-5",
   },
   {
     tab: "item",
@@ -51,7 +51,7 @@
     category: "アイテム",
     element: "道具",
     dataKey: "item",
-    url: "./assets/carddata/begins-items.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-items.tsv?v=20260629-card-update-5",
   },
   {
     tab: "spell",
@@ -60,7 +60,7 @@
     category: "スペル",
     element: "術",
     dataKey: "spell",
-    url: "./assets/carddata/begins-spells.tsv?v=20260626-card-update",
+    url: "./assets/carddata/begins-spells.tsv?v=20260629-card-update-5",
   },
 ];
 
