@@ -94,6 +94,7 @@ const BOOK_DATA_FILES = [
 ];
 const INITIAL_OWNED_URL = "./assets/bookdata/initial-owned.txt";
 const STORAGE_KEY = "cepter-prompt-atelier-state-v3";
+const GUEST_STORAGE_KEY = "cepter-prompt-atelier-guest-session-v1";
 const GUEST_KEY_STORAGE_KEY = "cepter-prompt-atelier-guest-key-v1";
 const INITIAL_DATA_VERSION = "20260620-initial-book-repair1";
 const BOOK_SIZE = 40;
@@ -770,6 +771,22 @@ function createInitialBookFromCards() {
   };
 }
 
+function resetGuestBookState() {
+  state.isRegistered = false;
+  state.userName = "";
+  state.supabaseUser = null;
+  state.remoteReady = false;
+  state.books = state.defaultBooks.map((book) => ({
+    ...normalizeBookCards(book),
+    skillText: ensureProfileHeadings(stripKnowledgeReferenceMetadata(book.skillText || emptySkillText())),
+    knowledgeReferenceIds: "",
+  }));
+  state.currentBookId = state.books.some((book) => book.id === DEFAULT_BOOK_ID) ? DEFAULT_BOOK_ID : state.books[0]?.id || DEFAULT_BOOK_ID;
+  state.ownedByCardId = normalizeCardCountMap(state.defaultOwnedByCardId);
+  if (els.questionText) els.questionText.value = "";
+  sessionStorage.removeItem(GUEST_STORAGE_KEY);
+}
+
 function getActiveBook() {
   return state.books.find((book) => book.id === state.currentBookId) || state.books[0];
 }
@@ -1037,22 +1054,19 @@ async function loadRemoteUserData() {
   renderCards();
   updateSummary();
   state.remoteReady = true;
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      skillText: els.skillText.value,
-      knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
-      questionText: els.questionText.value,
-      currentBookId: state.currentBookId,
-      ownedByCardId: state.ownedByCardId,
-      books: state.books,
-      initialDataVersion: INITIAL_DATA_VERSION,
-      isRegistered: state.isRegistered,
-      userName: state.userName,
-      knowledgePosts: state.knowledgePosts,
-      likedKnowledgeIds: state.likedKnowledgeIds,
-    }),
-  );
+  saveStoredState({
+    skillText: els.skillText.value,
+    knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
+    questionText: els.questionText.value,
+    currentBookId: state.currentBookId,
+    ownedByCardId: state.ownedByCardId,
+    books: state.books,
+    initialDataVersion: INITIAL_DATA_VERSION,
+    isRegistered: state.isRegistered,
+    userName: state.userName,
+    knowledgePosts: state.knowledgePosts,
+    likedKnowledgeIds: state.likedKnowledgeIds,
+  });
   els.bookStatus.textContent = repairedDefaultBooks || repairedOwnedCards
     ? "初期ブック・所持カードを初期データから復元しました。"
     : "Supabaseからブックを読み込みました。";
@@ -1131,6 +1145,24 @@ function queueRemoteSync() {
   }, 700);
 }
 
+function guestStoredState() {
+  const saved = safeParseJson(sessionStorage.getItem(GUEST_STORAGE_KEY));
+  return saved && !saved.isRegistered ? saved : null;
+}
+
+function preferredStoredState() {
+  return guestStoredState() || safeParseJson(localStorage.getItem(STORAGE_KEY));
+}
+
+function saveStoredState(payload) {
+  if (payload?.isRegistered) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    sessionStorage.removeItem(GUEST_STORAGE_KEY);
+    return;
+  }
+  sessionStorage.setItem(GUEST_STORAGE_KEY, JSON.stringify(payload));
+}
+
 function renderStrategyCopySelect() {
   const options = state.books
     .filter((book) => book.id !== state.currentBookId)
@@ -1164,18 +1196,20 @@ function persistAppState(options = {}) {
     knowledgePosts: state.knowledgePosts,
     likedKnowledgeIds: state.likedKnowledgeIds,
   };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  saveStoredState(payload);
   if (options.sync !== false && !pendingCardChanges) queueRemoteSync();
 }
 
 function initializeStoredState() {
-  const saved = safeParseJson(localStorage.getItem(STORAGE_KEY));
+  const saved = preferredStoredState();
+  const savedAsRegistered = Boolean(saved?.isRegistered);
   const savedSkillText = typeof saved?.skillText === "string" ? ensureProfileHeadings(saved.skillText) : ensureProfileHeadings(els.skillText.value);
-  state.isRegistered = Boolean(saved?.isRegistered);
+  const fallbackSkillText = savedAsRegistered ? savedSkillText : emptySkillText();
+  state.isRegistered = savedAsRegistered;
   const refreshGuestInitialData = Boolean(saved) && !state.isRegistered && saved.initialDataVersion !== INITIAL_DATA_VERSION;
   let repairedInitialData = false;
 
-  state.books = Array.isArray(saved?.books) && saved.books.length
+  state.books = savedAsRegistered && Array.isArray(saved?.books) && saved.books.length
     ? saved.books.map((book) => {
         const before = normalizeBookCards(book);
         const after = repairInitialBookIfCorrupted(book);
@@ -1191,34 +1225,34 @@ function initializeStoredState() {
   }
   state.books = state.books.map((book) => ({
     ...book,
-    skillText: ensureProfileHeadings(stripKnowledgeReferenceMetadata(book.skillText || savedSkillText)),
+    skillText: ensureProfileHeadings(stripKnowledgeReferenceMetadata(book.skillText || fallbackSkillText)),
     knowledgeReferenceIds: state.isRegistered
       ? normalizeKnowledgeReferenceText(
           book.knowledgeReferenceIds || extractKnowledgeReferenceMetadata(book.skillText) || (book.id === saved?.currentBookId ? saved?.knowledgeReferenceIds : ""),
         )
       : "",
   }));
-  state.currentBookId = state.books.some((book) => book.id === saved?.currentBookId)
+  state.currentBookId = savedAsRegistered && state.books.some((book) => book.id === saved?.currentBookId)
     ? saved.currentBookId
     : DEFAULT_BOOK_ID;
   if (!state.books.some((book) => book.id === state.currentBookId)) {
     state.currentBookId = state.books[0].id;
   }
   state.ownedByCardId = normalizeCardCountMap(
-    saved?.ownedByCardId && typeof saved.ownedByCardId === "object" ? saved.ownedByCardId : state.defaultOwnedByCardId,
+    savedAsRegistered && saved?.ownedByCardId && typeof saved.ownedByCardId === "object" ? saved.ownedByCardId : state.defaultOwnedByCardId,
   );
   if (refreshGuestInitialData || shouldRepairInitialOwnedCards(state.ownedByCardId)) {
     state.ownedByCardId = normalizeCardCountMap(state.defaultOwnedByCardId);
     repairedInitialData = true;
   }
-  state.userName = typeof saved?.userName === "string" ? saved.userName : "";
+  state.userName = savedAsRegistered && typeof saved?.userName === "string" ? saved.userName : "";
   state.knowledgePosts =
     Array.isArray(saved?.knowledgePosts) && saved.knowledgePosts.length
       ? saved.knowledgePosts.map(normalizeKnowledgePost)
       : defaultKnowledgePosts();
   state.likedKnowledgeIds = Array.isArray(saved?.likedKnowledgeIds) ? saved.likedKnowledgeIds.map(String) : [];
 
-  if (typeof saved?.questionText === "string") els.questionText.value = saved.questionText;
+  if (savedAsRegistered && typeof saved?.questionText === "string") els.questionText.value = saved.questionText;
   els.registeredMode.checked = state.isRegistered;
 
   applyOwnedToCards();
@@ -1351,20 +1385,34 @@ async function profileNameForUser(user) {
   return data?.display_name || authDisplayName(user);
 }
 
-async function applySupabaseSession(session) {
+async function applySupabaseSession(session, { resetGuest = false } = {}) {
   if (!session?.user) {
-    state.supabaseUser = null;
-    state.remoteReady = false;
-    state.isRegistered = false;
-    state.userName = "";
-    state.books.forEach((book) => {
-      book.knowledgeReferenceIds = "";
-    });
+    if (!resetGuest && guestStoredState()) {
+      state.supabaseUser = null;
+      state.remoteReady = false;
+      state.isRegistered = false;
+      state.userName = "";
+      if (els.registeredMode) els.registeredMode.checked = false;
+      updateKnowledgeMode();
+      renderBookSelect();
+      renderAuthState();
+      renderKnowledgePosts();
+      renderCards();
+      updateSummary();
+      persistAppState({ sync: false });
+      return;
+    }
+    resetGuestBookState();
+    applyOwnedToCards();
+    applyActiveBookToCards();
     if (els.knowledgeReferenceIds) els.knowledgeReferenceIds.value = "";
     if (els.registeredMode) els.registeredMode.checked = false;
     updateKnowledgeMode();
+    renderBookSelect();
     renderAuthState();
     renderKnowledgePosts();
+    renderCards();
+    updateSummary();
     persistAppState();
     return;
   }
@@ -1395,8 +1443,8 @@ async function initializeSupabaseAuth() {
     return false;
   }
   await applySupabaseSession(data.session);
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    applySupabaseSession(session);
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    applySupabaseSession(session, { resetGuest: event === "SIGNED_OUT" });
   });
   return Boolean(data.session?.user);
 }
@@ -2543,22 +2591,19 @@ els.applyBookChanges?.addEventListener("click", async () => {
   try {
     captureActiveBookFromCards();
     captureOwnedFromCards();
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        skillText: els.skillText.value,
-        knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
-        questionText: els.questionText.value,
-        currentBookId: state.currentBookId,
-        ownedByCardId: state.ownedByCardId,
-        books: state.books,
-        initialDataVersion: INITIAL_DATA_VERSION,
-        isRegistered: state.isRegistered,
-        userName: state.userName,
-        knowledgePosts: state.knowledgePosts,
-        likedKnowledgeIds: state.likedKnowledgeIds,
-      }),
-    );
+    saveStoredState({
+      skillText: els.skillText.value,
+      knowledgeReferenceIds: state.isRegistered ? normalizeKnowledgeReferenceText(els.knowledgeReferenceIds?.value) : "",
+      questionText: els.questionText.value,
+      currentBookId: state.currentBookId,
+      ownedByCardId: state.ownedByCardId,
+      books: state.books,
+      initialDataVersion: INITIAL_DATA_VERSION,
+      isRegistered: state.isRegistered,
+      userName: state.userName,
+      knowledgePosts: state.knowledgePosts,
+      likedKnowledgeIds: state.likedKnowledgeIds,
+    });
     if (state.isRegistered && supabaseClient && state.supabaseUser?.id && state.remoteReady) {
       await saveRemoteUserData();
       els.bookStatus.textContent = "ブック枚数をSupabaseへ反映しました。";
