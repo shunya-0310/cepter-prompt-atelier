@@ -1,3 +1,5 @@
+import { handleKnowledgeRequest } from "./knowledge-pages.js";
+
 const DEFAULT_SUPABASE_URL = "https://pnkkvwblyietgozgkgpa.supabase.co";
 const DEFAULT_SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBua2t2d2JseWlldGdvemdrZ3BhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwMTI4MTUsImV4cCI6MjA5NjU4ODgxNX0.Ms4_FI0oX-oBaZESlHLKq3sDYML01JT9B6HIbsF7OW0";
@@ -272,6 +274,10 @@ async function handleAutomationRequest(request, env, kind) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === "/sitemap.xml" || url.pathname === "/knowledge" || url.pathname.startsWith("/knowledge/")) {
+      return handleKnowledgeRequest(request, supabaseConfig(env));
+    }
 
     if (request.method === "GET" && /^\/ai\/dossier\/[^/]+$/.test(url.pathname)) {
       return handleDossier(request, env);

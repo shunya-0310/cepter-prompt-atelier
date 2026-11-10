@@ -38,6 +38,26 @@ GitHub上に古い `functions/` が残っていても、`wrangler.jsonc` が正�
 
 ## 主な動的URL
 
+- `/knowledge/`（`?page=2` 以降も本文付き一覧）
+  - 公開投稿のみをサーバーでHTML化します。JavaScriptなしで閲覧可能です。
+- `/knowledge/00026/` など
+  - 公開投稿の個別ページです。非公開・削除済み・不正なIDは404になります。
+- `/sitemap.xml`
+  - 公開ナレッジと一覧の各ページを自動反映します。投稿の追加後に再デプロイは不要です。
+  - 上流障害は503にし、空のサイトマップや本文のない200を返しません。
+- `/?screen=knowledge` / `/?knowledge=00026`
+  - 既存アプリ内のナレッジ一覧、または公開投稿の位置を開きます。
+  - 「反映」、秘蔵ナレッジ、プロンプト生成は従来のアプリ側で処理します。
+
+### 公開ナレッジのSEOと非公開境界
+
+公開HTMLとサイトマップは `public_knowledge_feed` だけを参照します。このビューの定義は `knowledge_posts.visibility = 'public'` に限定されています。
+共有トークンや秘蔵用ID（PVT）、`share_contexts` を公開ページから解決しません。HTML/XMLは `Cache-Control: no-store` とし、削除や非公開化の直後にも公開可否を照会します。
+AI用共有URLは従来どおり、本人が選択した秘蔵も共有できる仕組みです。これらをサイトマップや公開一覧に追加しないでください。
+
+検証: `node --test tests/knowledge-seo.test.mjs` と `node --check public/app.js`。
+Search Consoleでは `https://cepter-atelier.com/sitemap.xml` を送信し、`/knowledge/` と代表投稿のURL検査で本文とcanonicalを確認します。
+
 - `/ai/dossier/<token>.md`
   - 共有コンテキストを読み、公開ナレッジを追記したMarkdownを返します。
 - `/ai/knowledge/public.md`

@@ -1819,7 +1819,7 @@ function renderKnowledgePosts() {
                 </button>`
             : "";
         return `
-          <article class="knowledge-card">
+          <article class="knowledge-card"${post.visibility === "public" && post.publicNo > 0 ? ` data-public-knowledge="${Number(post.publicNo)}"` : ""}>
             <div class="knowledge-card-head">
               <div class="knowledge-meta-line">
                 <span class="knowledge-viewpoint">${escapeHtml(VIEWPOINT_LABELS[post.viewpoint] || "ブック")}</span>
@@ -1833,7 +1833,7 @@ function renderKnowledgePosts() {
                 ${canDelete ? `<button class="delete-knowledge-button" data-delete-knowledge="${escapeHtml(post.id)}" type="button">削除</button>` : ""}
               </div>
             </div>
-            <h3>${escapeHtml(post.title)}</h3>
+            <h3>${post.visibility === "public" && post.publicNo > 0 ? `<a class="knowledge-link" href="/knowledge/${String(post.publicNo).padStart(5, "0")}/" target="_blank" rel="noopener">${escapeHtml(post.title)}</a>` : escapeHtml(post.title)}</h3>
             <time class="knowledge-date" datetime="${escapeHtml(post.createdAt)}">${escapeHtml(formatKnowledgeDate(post.createdAt))}</time>
             <p>${escapeHtml(post.comment)}</p>
             <div class="knowledge-related">${relatedCards}</div>
@@ -2977,7 +2977,17 @@ loadCards().then(async () => {
   const hasSupabaseSession = await initializeSupabaseAuth();
   await loadRemoteKnowledgePosts();
   renderAuthState();
-  showScreen(hasSupabaseSession && isSupabaseAuthCallback() ? "app" : "landing", { scroll: false });
+  const entry = new URLSearchParams(location.search);
+  const publicKnowledgeNumber = /^[0-9]{1,10}$/.test(entry.get("knowledge") || "") ? Number(entry.get("knowledge")) : 0;
+  const openKnowledge = publicKnowledgeNumber > 0 || entry.get("screen") === "knowledge";
+  showScreen(openKnowledge ? "knowledge" : hasSupabaseSession && isSupabaseAuthCallback() ? "app" : "landing", { scroll: false });
+  if (publicKnowledgeNumber > 0) {
+    const target = els.knowledgeList.querySelector(`[data-public-knowledge="${publicKnowledgeNumber}"]`);
+    if (target) window.requestAnimationFrame(() => {
+      target.scrollIntoView({ block: "center" });
+      target.animate([{ outline: "2px solid #ffd873" }, { outline: "2px solid transparent" }], { duration: 2400 });
+    });
+  }
   syncMobilePaneLayout();
   renderCards();
   updateSummary();
